@@ -56,135 +56,140 @@
         }
 
         .toolbar {
-            width: 88px;
+            width: 72px;
             height: 100vh;
-            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+            background: var(--bg-secondary);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 6px 4px;
+            padding: 12px 8px;
             z-index: 100;
             overflow-y: auto;
             overflow-x: hidden;
-            position: relative;
-            max-height: 100vh;
         }
 
-        .toolbar::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .toolbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .toolbar::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 2px;
-        }
-
-        .toolbar::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
+        .toolbar::-webkit-scrollbar { width: 0; }
 
         .toolbar-logo {
-            width: 36px;
-            height: 36px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--accent-cyan);
-            margin-bottom: 4px;
+            color: white;
+            margin-bottom: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            padding: 4px;
-            flex-shrink: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
         }
 
         .toolbar-logo:hover {
-            background: var(--accent-cyan);
-            color: var(--bg-primary);
+            transform: scale(1.05) rotate(-5deg);
+            box-shadow: 0 6px 20px rgba(0, 212, 170, 0.4);
         }
 
-        .toolbar-logo svg {
-            width: 20px;
-            height: 20px;
-        }
+        .toolbar-logo svg { width: 24px; height: 24px; }
 
         .toolbar-points {
-            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
-            color: var(--bg-primary);
-            padding: 3px 6px;
-            border-radius: var(--radius-sm);
-            font-size: 9px;
-            font-weight: 600;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            color: var(--accent-cyan);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
             text-align: center;
-            margin-bottom: 4px;
-            flex-shrink: 0;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
 
-        .toolbar-divider {
-            width: 60px;
-            height: 1px;
-            background: var(--border-color);
-            margin: 3px 0;
-            flex-shrink: 0;
-        }
-
-        .toolbar-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 3px;
+        .toolbar-section {
             width: 100%;
-            padding: 0 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-bottom: 8px;
+        }
+
+        .toolbar-section-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 0 4px;
+            text-align: center;
+            opacity: 0.7;
         }
 
         .toolbar-btn {
-            width: 36px;
-            height: 36px;
-            background: var(--bg-elevated);
-            border-radius: var(--radius-sm);
+            width: 56px;
+            height: 56px;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 3px;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.2s ease;
-            padding: 4px;
-            flex-shrink: 0;
-            border: 1px solid transparent;
-            justify-self: center;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            margin: 0 auto;
         }
 
-        .toolbar-btn svg {
-            width: 16px;
-            height: 16px;
-            transition: transform 0.2s ease;
-        }
-
-        .toolbar-btn span {
-            display: none;
+        .toolbar-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            background: transparent;
+            transition: all 0.25s ease;
         }
 
         .toolbar-btn:hover {
-            background: var(--bg-card);
             color: var(--accent-cyan);
-            border-color: var(--accent-cyan);
-            transform: scale(1.05);
+        }
+
+        .toolbar-btn:hover::before {
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .toolbar-btn:active {
+            transform: scale(0.95);
+        }
+
+        .toolbar-btn.active {
+            color: var(--accent-cyan);
+        }
+
+        .toolbar-btn.active::before {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+            box-shadow: inset 0 0 0 1px rgba(0, 212, 170, 0.3);
+        }
+
+        .toolbar-btn svg {
+            width: 22px;
+            height: 22px;
+            transition: transform 0.25s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .toolbar-btn:hover svg {
             transform: scale(1.1);
         }
 
-        .toolbar-btn.active {
-            background: linear-gradient(135deg, rgba(0, 212, 170, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
-            color: var(--accent-cyan);
-            border-color: var(--accent-cyan);
+        .toolbar-btn span {
+            font-size: 9px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            position: relative;
+            z-index: 1;
         }
 
         .calculator-container {
@@ -2388,6 +2393,58 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-muted);
         }
+
+        @media (max-height: 800px) {
+            .toolbar { padding: 8px 6px; }
+            .toolbar-logo { width: 38px; height: 38px; margin-bottom: 6px; }
+            .toolbar-logo svg { width: 20px; height: 20px; }
+            .toolbar-points { font-size: 9px; padding: 3px 8px; margin-bottom: 8px; }
+            .toolbar-btn { width: 48px; height: 48px; }
+            .toolbar-btn svg { width: 18px; height: 18px; }
+            .toolbar-btn span { font-size: 8px; }
+            .toolbar-section-label { font-size: 8px; padding: 4px 0 2px; }
+            .toolbar-section { gap: 1px; margin-bottom: 4px; }
+        }
+
+        @media (max-height: 700px) {
+            .toolbar { padding: 6px 4px; }
+            .toolbar-logo { width: 34px; height: 34px; margin-bottom: 4px; }
+            .toolbar-logo svg { width: 18px; height: 18px; }
+            .toolbar-points { display: none; }
+            .toolbar-btn { width: 42px; height: 42px; }
+            .toolbar-btn svg { width: 16px; height: 16px; }
+            .toolbar-section-label { padding: 3px 0 1px; margin-bottom: 2px; }
+            .toolbar-section { gap: 0; margin-bottom: 2px; }
+        }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .toolbar { 
+                width: 100%; 
+                height: auto;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 8px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .toolbar-logo { margin-bottom: 0; margin-right: 12px; }
+            .toolbar-points { margin-bottom: 0; margin-right: 12px; }
+            .toolbar-section { 
+                flex-direction: row;
+                margin-bottom: 0;
+                margin-right: 8px;
+            }
+            .toolbar-section-label { display: none; }
+            .main-content { width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            .toolbar-btn { width: 42px; height: 42px; }
+            .toolbar-btn span { display: none; }
+            .toolbar-btn svg { width: 18px; height: 18px; }
+        }
     </style>
 </head>
 <body>
@@ -2448,7 +2505,7 @@
 
             <div class="toolbar-points" id="pointsDisplay">100积分</div>
 
-            <div class="toolbar-grid">
+            <div class="toolbar-section">
                 <button class="toolbar-btn active" id="cameraBtn" title="摄像头">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
@@ -2456,7 +2513,6 @@
                     </svg>
                     <span>摄像头</span>
                 </button>
-                
                 <button class="toolbar-btn" id="selectionBtn" title="框选模式">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-dasharray="4 2"/>
@@ -2464,7 +2520,6 @@
                     </svg>
                     <span>框选</span>
                 </button>
-
                 <button class="toolbar-btn" id="captureBtn" title="拍照">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/>
@@ -2472,7 +2527,10 @@
                     </svg>
                     <span>拍照</span>
                 </button>
+            </div>
 
+            <div class="toolbar-section-label">学习</div>
+            <div class="toolbar-section">
                 <button class="toolbar-btn" id="notebookBtn" title="错题本">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
@@ -2482,7 +2540,6 @@
                     </svg>
                     <span>错题本</span>
                 </button>
-                
                 <button class="toolbar-btn" id="questionBankBtn" title="线上题库">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
@@ -2493,84 +2550,67 @@
                     </svg>
                     <span>题库</span>
                 </button>
-                
+            </div>
+
+            <div class="toolbar-section-label">AI助手</div>
+            <div class="toolbar-section">
                 <button class="toolbar-btn" id="aiModeBtn" title="AI解题">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"/>
                         <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
                     </svg>
-                    <span>AI解题</span>
+                    <span>解题</span>
                 </button>
-                
                 <button class="toolbar-btn" id="aiWriteBtn" title="AI写作">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 20h9"/>
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                     </svg>
-                    <span>AI写作</span>
+                    <span>写作</span>
                 </button>
-
                 <button class="toolbar-btn" id="aiChatBtn" title="AI聊天">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                     </svg>
-                    <span>AI聊天</span>
+                    <span>聊天</span>
                 </button>
-
                 <button class="toolbar-btn" id="aiKnowledgeBtn" title="AI知识点">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 16v-4"/>
-                        <path d="M12 8h.01"/>
+                        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
                     </svg>
-                    <span>AI知识点</span>
+                    <span>知识点</span>
                 </button>
-
-                <button class="toolbar-btn" id="aiAuditBtn" title="AI内容审核">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        <path d="M9 12l2 2 4-4"/>
-                    </svg>
-                    <span>AI审核</span>
-                </button>
-
-                <button class="toolbar-btn" id="aiEncyclopediaBtn" title="AI百科全书">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                        <line x1="8" y1="6" x2="16" y2="6"/>
-                        <line x1="8" y1="10" x2="16" y2="10"/>
-                        <line x1="8" y1="14" x2="12" y2="14"/>
-                    </svg>
-                    <span>AI百科</span>
-                </button>
-
                 <button class="toolbar-btn" id="aiCodeBtn" title="AI程序助手">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="16 18 22 12 16 6"/>
-                        <polyline points="8 6 2 12 8 18"/>
+                        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
                     </svg>
-                    <span>AI编程</span>
+                    <span>编程</span>
                 </button>
+            </div>
 
+            <div class="toolbar-section-label">更多</div>
+            <div class="toolbar-section">
                 <button class="toolbar-btn" id="mazeBtn" title="迷宫探险">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 3h18v18H3z"/>
-                        <path d="M9 3v18"/>
-                        <path d="M15 3v18"/>
-                        <path d="M3 9h18"/>
-                        <path d="M3 15h18"/>
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
                     </svg>
                     <span>迷宫</span>
                 </button>
-
                 <button class="toolbar-btn" id="dailyRewardBtn" title="每日奖励">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
                     <span>奖励</span>
                 </button>
-
+                <button class="toolbar-btn" id="gameBtn" title="小游戏">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                        <path d="M4 22h16"/>
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                    </svg>
+                    <span>游戏</span>
+                </button>
                 <button class="toolbar-btn" id="settingsBtn" title="设置">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"/>
@@ -2578,24 +2618,10 @@
                     </svg>
                     <span>设置</span>
                 </button>
-
-                <button class="toolbar-btn" id="gameBtn" title="小游戏">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                        <path d="M4 22h16"/>
-                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-                    </svg>
-                    <span>游戏</span>
-                </button>
-
                 <button class="toolbar-btn" id="exitBtn" title="退出">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/>
-                        <line x1="8" y1="12" x2="21" y2="12"/>
+                        <polyline points="16 17 21 12 16 7"/><line x1="8" y1="12" x2="21" y2="12"/>
                     </svg>
                     <span>退出</span>
                 </button>
