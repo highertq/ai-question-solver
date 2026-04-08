@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>识题王 - 线上题库</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #161d2f;
+            --bg-card: #1e293b;
+            --bg-elevated: #2d3748;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .activation-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 15, 26, 0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activation-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 48px 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+        }
+
+        .activation-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .activation-icon svg {
+            width: 40px;
+            height: 40px;
+            color: var(--bg-primary);
+        }
+
+        .activation-content h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .activation-content p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .activation-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .activation-input {
+            flex: 1;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .activation-input:focus {
+            border-color: var(--accent-blue);
+            outline: none;
+        }
+
+        .activation-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: none;
+            border-radius: var(--radius-md);
+            color: var(--bg-primary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .activation-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .activation-status {
+            font-size: 13px;
+            color: var(--text-secondary);
+            min-height: 20px;
+        }
+
+        .activation-status.success {
+            color: var(--accent-green);
+        }
+
+        .activation-status.error {
+            color: #ef4444;
+        }
+
+        .generate-code-btn {
+            margin-top: 16px;
+            padding: 8px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .generate-code-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .question-bank-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .question-bank-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .question-bank-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: var(--bg-primary);
+        }
+
+        .action-btn.secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .question-bank-search {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .search-input-group {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 48px 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            outline: none;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        .search-btn:hover {
+            background: var(--bg-card);
+            color: var(--accent-blue);
+        }
+
+        .question-category {
+            min-width: 200px;
+        }
+
+        .category-select {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .category-select:focus {
+            border-color: var(--accent-blue);
+            outline: none;
+        }
+
+        .question-bank-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .question-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-blue);
+        }
+
+        .question-card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: var(--bg-secondary);
+        }
+
+        .question-card-body {
+            padding: 20px;
+        }
+
+        .question-card-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .question-card-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .question-card-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .question-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .question-card-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .question-card-btn.view {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .question-card-btn.download {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+        }
+
+        .question-card-btn:hover {
+            opacity: 0.8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 64px 24px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        .upload-question-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 15, 26, 0.9);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-question-modal.active {
+            display: flex;
+        }
+
+        .upload-question-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+        }
+
+        .upload-question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .upload-question-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .upload-section {
+            margin-bottom: 24px;
+        }
+
+        .upload-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .upload-area {
+            position: relative;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-elevated);
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .upload-placeholder svg {
+            width: 48px;
+            height: 48px;
+            color: var(--text-muted);
+        }
+
+        .upload-placeholder p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .upload-placeholder small {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .upload-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: var(--radius-md);
+            object-fit: contain;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-select {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .form-select:focus {
+            border-color: var(--accent-purple);
+            outline: none;
+        }
+
+        .form-textarea {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'Noto Sans SC', sans-serif;
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.5;
+        }
+
+        .form-textarea:focus {
+            border-color: var(--accent-purple);
+            outline: none;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .form-btn {
+            flex: 1;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .form-btn.primary {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: var(--bg-primary);
+        }
+
+        .form-btn.secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .form-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .question-bank-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .question-bank-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .question-bank-search {
+                flex-direction: column;
+            }
+
+            .search-input-group,
+            .question-category {
+                width: 100%;
+            }
+
+            .question-bank-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .activation-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>识题王 - 线上题库</h1>
+            <p>汇聚优质题目，助力学习成长</p>
+        </div>
+
+        <div class="question-bank-header">
+            <h2>题目列表</h2>
+            <div class="question-bank-actions">
+                <button class="action-btn primary" id="uploadQuestionBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    上传题目
+                </button>
+            </div>
+        </div>
+
+        <div class="question-bank-search">
+            <div class="search-input-group">
+                <input type="text" id="questionSearchInput" placeholder="搜索题目..." class="search-input">
+                <button class="search-btn" id="questionSearchBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="question-category">
+                <select id="questionCategorySelect" class="category-select">
+                    <option value="all">全部分类</option>
+                    <option value="math">数学</option>
+                    <option value="physics">物理</option>
+                    <option value="chemistry">化学</option>
+                    <option value="biology">生物</option>
+                    <option value="english">英语</option>
+                    <option value="other">其他</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="question-bank-grid" id="questionBankGrid"></div>
+        <div class="empty-state hidden" id="emptyQuestionBank">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                <line x1="8" y1="7" x2="16" y2="7"/>
+                <line x1="8" y1="11" x2="16" y2="11"/>
+            </svg>
+            <h3>题库为空</h3>
+            <p>请上传题目或等待其他用户分享</p>
+        </div>
+    </div>
+
+    <div class="activation-panel" id="activationPanel">
+        <div class="activation-content">
+            <div class="activation-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M21 12V7.5a2.5 2.5 0 0 0-2.5-2.5H16m0 0H9.5a2.5 2.5 0 0 0-2.5 2.5V12m0 0v4.5a2.5 2.5 0 0 0 2.5 2.5H16m0 0h2.5a2.5 2.5 0 0 0 2.5-2.5V12"/>
+                    <path d="M12 12v4m0 0v1m0-1h1m-1 0H9"/>
+                </svg>
+            </div>
+            <h2>激活线上题库</h2>
+            <p>请输入激活码以访问线上题库功能</p>
+            <div class="activation-form">
+                <input type="text" id="activationCodeInput" placeholder="输入激活码" class="activation-input">
+                <button class="activation-btn" id="activateBtn">激活</button>
+            </div>
+            <div class="activation-status" id="activationStatus"></div>
+            <button class="generate-code-btn" id="generateCodeBtn">生成测试激活码</button>
+        </div>
+    </div>
+
+    <div class="upload-question-modal" id="uploadQuestionModal">
+        <div class="upload-question-content">
+            <div class="upload-question-header">
+                <h2>上传题目</h2>
+                <button class="close-btn" id="closeUploadModal">&times;</button>
+            </div>
+            
+            <div class="upload-section">
+                <label class="upload-label">题目图片</label>
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="questionImageInput" accept="image/*" class="upload-input">
+                    <div class="upload-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <p>点击或拖拽上传图片</p>
+                        <small>支持 JPG、PNG 格式，最大 5MB</small>
+                    </div>
+                    <img id="uploadPreview" class="upload-preview hidden" src="" alt="预览">
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <label class="form-label">题型分类</label>
+                <select id="uploadCategorySelect" class="form-select">
+                    <option value="math">数学</option>
+                    <option value="physics">物理</option>
+                    <option value="chemistry">化学</option>
+                    <option value="biology">生物</option>
+                    <option value="english">英语</option>
+                    <option value="other">其他</option>
+                </select>
+            </div>
+            
+            <div class="form-section">
+                <label class="form-label">题目描述</label>
+                <textarea id="questionDescription" placeholder="请简要描述题目内容..." class="form-textarea"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button class="form-btn secondary" id="cancelUploadBtn">取消</button>
+                <button class="form-btn primary" id="submitUploadBtn">上传</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 线上题库功能
+        let questionBank = [];
+        let isActivated = localStorage.getItem('questionBankActivated') === 'true';
+
+        // 生成随机16进制激活码
+        function generateActivationCode() {
+            const chars = '0123456789ABCDEF';
+            let code = '';
+            for (let i = 0; i < 16; i++) {
+                code += chars[Math.floor(Math.random() * 16)];
+            }
+            return code;
+        }
+
+        // 验证激活码（这里简化处理，实际部署时应该从服务器验证）
+        function verifyActivationCode(code) {
+            // 这里可以添加服务器验证逻辑
+            // 暂时使用本地验证
+            return code.length === 16 && /^[0-9A-F]+$/.test(code);
+        }
+
+        // 激活线上题库
+        function activateQuestionBank() {
+            const code = document.getElementById('activationCodeInput').value.trim();
+            const status = document.getElementById('activationStatus');
+            
+            if (!code) {
+                status.textContent = '请输入激活码';
+                status.className = 'activation-status error';
+                return;
+            }
+            
+            if (verifyActivationCode(code)) {
+                isActivated = true;
+                localStorage.setItem('questionBankActivated', 'true');
+                status.textContent = '激活成功！';
+                status.className = 'activation-status success';
+                setTimeout(() => {
+                    document.getElementById('activationPanel').style.display = 'none';
+                    loadQuestionBank();
+                }, 1000);
+            } else {
+                status.textContent = '激活码无效';
+                status.className = 'activation-status error';
+            }
+        }
+
+        // 生成测试激活码
+        function generateTestCode() {
+            const code = generateActivationCode();
+            document.getElementById('activationCodeInput').value = code;
+            showToast('已生成测试激活码');
+        }
+
+        // 显示线上题库
+        function showQuestionBank() {
+            if (!isActivated) {
+                document.getElementById('activationPanel').style.display = 'flex';
+                return;
+            }
+            loadQuestionBank();
+        }
+
+        // 加载题库数据
+        function loadQuestionBank() {
+            // 实际部署时应该从服务器获取数据
+            // 暂时使用本地存储
+            const savedBank = localStorage.getItem('questionBank');
+            if (savedBank) {
+                questionBank = JSON.parse(savedBank);
+            } else {
+                // 初始化示例数据
+                questionBank = [
+                    {
+                        id: Date.now() + 1,
+                        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDAwMDAwMTAiLz4KPHBhdGggZD0iTTIwIDQwIEwxODAgNDAgTDE4MCAxNjAgTDIwIDE2MCIgZmlsbD0iIzMzMzMzMzIwIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuaYvue7meS4ieaWs+eJvueoi+WPiiDmg63pn7Plj5g8L3RleHQ+Cjwvc3ZnPg==',
+                        category: 'math',
+                        description: '二次函数图像分析题',
+                        uploadDate: new Date().toISOString(),
+                        uploader: '用户1'
+                    },
+                    {
+                        id: Date.now() + 2,
+                        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDAwMDAwMTAiLz4KPHBhdGggZD0iTTIwIDQwIEwxODAgNDAgTDE4MCAxNjAgTDIwIDE2MCIgZmlsbD0iIzMzMzMzMzIwIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuaYvue7meS4ieaWs+eJvueoi+WPiiDnmoTpgJnljYnlh7w8L3RleHQ+Cjwvc3ZnPg==',
+                        category: 'physics',
+                        description: '力学分析题',
+                        uploadDate: new Date().toISOString(),
+                        uploader: '用户2'
+                    }
+                ];
+                localStorage.setItem('questionBank', JSON.stringify(questionBank));
+            }
+            renderQuestionBank();
+        }
+
+        // 渲染题库
+        function renderQuestionBank() {
+            const grid = document.getElementById('questionBankGrid');
+            const emptyState = document.getElementById('emptyQuestionBank');
+            const searchTerm = document.getElementById('questionSearchInput').value.toLowerCase();
+            const category = document.getElementById('questionCategorySelect').value;
+            
+            const filteredQuestions = questionBank.filter(q => {
+                const matchesSearch = q.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = category === 'all' || q.category === category;
+                return matchesSearch && matchesCategory;
+            });
+            
+            if (filteredQuestions.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filteredQuestions.map(question => `
+                <div class="question-card">
+                    <img src="${question.image}" alt="题目" class="question-card-image">
+                    <div class="question-card-body">
+                        <span class="question-card-category">${getCategoryName(question.category)}</span>
+                        <div class="question-card-description">${question.description}</div>
+                        <div class="question-card-meta">
+                            上传者: ${question.uploader} | ${formatDate(question.uploadDate)}
+                        </div>
+                        <div class="question-card-actions">
+                            <button class="question-card-btn view" onclick="viewQuestion(${question.id})">查看</button>
+                            <button class="question-card-btn download" onclick="downloadToMistakes(${question.id})">下载</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 获取分类名称
+        function getCategoryName(category) {
+            const categories = {
+                math: '数学',
+                physics: '物理',
+                chemistry: '化学',
+                biology: '生物',
+                english: '英语',
+                other: '其他'
+            };
+            return categories[category] || '其他';
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        // 查看题目
+        function viewQuestion(id) {
+            const question = questionBank.find(q => q.id === id);
+            if (question) {
+                const img = new Image();
+                img.src = question.image;
+                img.style.maxWidth = '80%';
+                img.style.maxHeight = '80%';
+                
+                const viewer = document.createElement('div');
+                viewer.style.position = 'fixed';
+                viewer.style.top = '0';
+                viewer.style.left = '0';
+                viewer.style.width = '100%';
+                viewer.style.height = '100%';
+                viewer.style.background = 'rgba(0,0,0,0.9)';
+                viewer.style.display = 'flex';
+                viewer.style.alignItems = 'center';
+                viewer.style.justifyContent = 'center';
+                viewer.style.zIndex = '1000';
+                viewer.onclick = () => document.body.removeChild(viewer);
+                
+                viewer.appendChild(img);
+                document.body.appendChild(viewer);
+            }
+        }
+
+        // 下载题目到错题本
+        function downloadToMistakes(id) {
+            const question = questionBank.find(q => q.id === id);
+            if (question) {
+                const mistake = {
+                    id: Date.now(),
+                    image: question.image,
+                    category: question.category,
+                    description: question.description,
+                    date: new Date().toISOString()
+                };
+                
+                let mistakes = JSON.parse(localStorage.getItem('mistakes') || '[]');
+                mistakes.push(mistake);
+                localStorage.setItem('mistakes', JSON.stringify(mistakes));
+                showToast('已添加到错题本');
+            }
+        }
+
+        // 显示上传题目模态框
+        function showUploadModal() {
+            document.getElementById('uploadQuestionModal').classList.add('active');
+        }
+
+        // 隐藏上传题目模态框
+        function hideUploadModal() {
+            document.getElementById('uploadQuestionModal').classList.remove('active');
+            resetUploadForm();
+        }
+
+        // 重置上传表单
+        function resetUploadForm() {
+            document.getElementById('questionImageInput').value = '';
+            document.getElementById('uploadPreview').src = '';
+            document.getElementById('uploadPreview').classList.add('hidden');
+            document.getElementById('uploadCategorySelect').value = 'math';
+            document.getElementById('questionDescription').value = '';
+        }
+
+        // 处理图片上传
+        function handleQuestionImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('uploadPreview');
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 上传题目
+        function uploadQuestion() {
+            const imageInput = document.getElementById('questionImageInput');
+            const category = document.getElementById('uploadCategorySelect').value;
+            const description = document.getElementById('questionDescription').value.trim();
+            
+            if (!imageInput.files[0]) {
+                showToast('请上传题目图片');
+                return;
+            }
+            
+            if (!description) {
+                showToast('请输入题目描述');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newQuestion = {
+                    id: Date.now(),
+                    image: e.target.result,
+                    category: category,
+                    description: description,
+                    uploadDate: new Date().toISOString(),
+                    uploader: '当前用户' // 实际部署时应该从登录信息获取
+                };
+                
+                questionBank.push(newQuestion);
+                localStorage.setItem('questionBank', JSON.stringify(questionBank));
+                showToast('上传成功！');
+                hideUploadModal();
+                loadQuestionBank();
+            };
+            reader.readAsDataURL(imageInput.files[0]);
+        }
+
+        // 显示提示信息
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // 绑定事件
+        function bindEvents() {
+            // 激活相关事件
+            document.getElementById('activateBtn').addEventListener('click', activateQuestionBank);
+            document.getElementById('generateCodeBtn').addEventListener('click', generateTestCode);
+            
+            // 上传相关事件
+            document.getElementById('uploadQuestionBtn').addEventListener('click', showUploadModal);
+            document.getElementById('closeUploadModal').addEventListener('click', hideUploadModal);
+            document.getElementById('cancelUploadBtn').addEventListener('click', hideUploadModal);
+            document.getElementById('submitUploadBtn').addEventListener('click', uploadQuestion);
+            document.getElementById('questionImageInput').addEventListener('change', handleQuestionImageUpload);
+            
+            // 搜索和分类事件
+            document.getElementById('questionSearchInput').addEventListener('input', renderQuestionBank);
+            document.getElementById('questionCategorySelect').addEventListener('change', renderQuestionBank);
+            document.getElementById('questionSearchBtn').addEventListener('click', renderQuestionBank);
+        }
+
+        // 初始化应用
+        function init() {
+            bindEvents();
+            showQuestionBank();
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
