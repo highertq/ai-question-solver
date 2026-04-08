@@ -6,12 +6,15 @@ export default async function handler(req, res) {
     const API_KEY = process.env.DASHSCOPE_API_KEY;
     
     if (!API_KEY) {
-        return res.status(500).json({ error: 'API Key not configured' });
+        console.error('DASHSCOPE_API_KEY not found in environment variables');
+        return res.status(500).json({ error: 'API Key not configured. Please set DASHSCOPE_API_KEY in Vercel Environment Variables.' });
     }
 
     const API_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
 
     try {
+        console.log('Making request to DashScope API...');
+        
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -23,6 +26,7 @@ export default async function handler(req, res) {
 
         if (!response.ok) {
             const errorText = await response.text();
+            console.error('DashScope API error:', response.status, errorText);
             return res.status(response.status).json({ error: errorText });
         }
 
@@ -44,6 +48,6 @@ export default async function handler(req, res) {
         res.end();
     } catch (error) {
         console.error('Proxy error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error: ' + error.message });
     }
 }

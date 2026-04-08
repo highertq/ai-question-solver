@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>识题王 - AI智能解题助手</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-    <script src="lib/hands.js" crossorigin="anonymous"></script>
-    <script src="lib/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="lib/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="lib/marked.min.js"></script>
     <link rel="stylesheet" href="lib/katex.min.css">
     <script src="lib/katex.min.js"></script>
@@ -3769,10 +3767,14 @@
 
             updateNotebookDisplay();
             updatePointsDisplay();
-            await initMediaPipe();
         }
 
         async function initMediaPipe() {
+            if (typeof Hands === 'undefined') {
+                console.log('MediaPipe Hands not loaded, skipping gesture detection');
+                return;
+            }
+            
             hands = new Hands({
                 locateFile: (file) => {
                     return `lib/${file}`;

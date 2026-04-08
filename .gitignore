@@ -1,1 +1,3 @@
 lib/hands.js
+lib/camera_utils.js
+lib/drawing_utils.js
