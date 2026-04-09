@@ -3568,7 +3568,8 @@
 
         const notebook = JSON.parse(localStorage.getItem('notebook') || '[]');
 
-        let API_URL = localStorage.getItem('apiUrl') || '/api/chat';
+        let API_KEY = localStorage.getItem('apiKey') || 'sk-d457964eeeec46d0abc26e45a26db57e';
+        let API_URL = localStorage.getItem('apiUrl') || 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
         let PRIMARY_MODEL = localStorage.getItem('primaryModel') || 'qwen3.5-plus';
         let FALLBACK_MODEL = localStorage.getItem('fallbackModel') || 'qwen-vl-max';
         let userPoints = parseInt(localStorage.getItem('userPoints')) || 100;
@@ -4011,7 +4012,8 @@
                 response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
                     },
                     body: JSON.stringify({
                         model: modelToUse,
@@ -4027,7 +4029,8 @@
                     response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
                         },
                         body: JSON.stringify({
                             model: modelToUse,
@@ -4155,7 +4158,8 @@
                 response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
                     },
                     body: JSON.stringify({
                         model: modelToUse,
@@ -4169,7 +4173,8 @@
                     response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
                         },
                         body: JSON.stringify({
                             model: modelToUse,
@@ -4401,7 +4406,8 @@
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
                     },
                     body: JSON.stringify({
                         model: PRIMARY_MODEL,
@@ -5279,7 +5285,8 @@ ${requirements ? '- 其他要求：' + requirements : ''}
                 response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
                     },
                     body: JSON.stringify({
                         model: modelToUse,
@@ -5300,11 +5307,12 @@ ${requirements ? '- 其他要求：' + requirements : ''}
                 if (!response.ok) {
                     console.log(`${modelToUse} 失败，尝试备用模型...`);
                     modelToUse = FALLBACK_MODEL;
-                    
+
                     response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
                         },
                         body: JSON.stringify({
                             model: modelToUse,
@@ -5461,7 +5469,8 @@ ${requirements ? '- 其他要求：' + requirements : ''}
                 response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
                     },
                     body: JSON.stringify({
                         model: modelToUse,
@@ -5482,11 +5491,12 @@ ${requirements ? '- 其他要求：' + requirements : ''}
                 if (!response.ok) {
                     console.log(`${modelToUse} 失败，尝试备用模型...`);
                     modelToUse = FALLBACK_MODEL;
-                    
+
                     response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
                         },
                         body: JSON.stringify({
                             model: modelToUse,
@@ -5633,7 +5643,8 @@ ${content}
                 response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
                     },
                     body: JSON.stringify({
                         model: modelToUse,
@@ -5654,11 +5665,12 @@ ${content}
                 if (!response.ok) {
                     console.log(`${modelToUse} 失败，尝试备用模型...`);
                     modelToUse = FALLBACK_MODEL;
-                    
+
                     response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
                         },
                         body: JSON.stringify({
                             model: modelToUse,
@@ -5802,7 +5814,8 @@ ${content}
                 response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
                     },
                     body: JSON.stringify({
                         model: modelToUse,
@@ -5823,11 +5836,12 @@ ${content}
                 if (!response.ok) {
                     console.log(`${modelToUse} 失败，尝试备用模型...`);
                     modelToUse = FALLBACK_MODEL;
-                    
+
                     response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
                         },
                         body: JSON.stringify({
                             model: modelToUse,
@@ -5995,7 +6009,8 @@ ${problem}
                 response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
                     },
                     body: JSON.stringify({
                         model: modelToUse,
@@ -6016,11 +6031,12 @@ ${problem}
                 if (!response.ok) {
                     console.log(`${modelToUse} 失败，尝试备用模型...`);
                     modelToUse = FALLBACK_MODEL;
-                    
+
                     response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
                         },
                         body: JSON.stringify({
                             model: modelToUse,
