@@ -24,6 +24,7 @@
             --accent-orange: #f59e0b;
             --accent-pink: #ec4899;
             --accent-green: #22c55e;
+            --accent-red: #ef4444;
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
@@ -3565,25 +3566,11 @@
         let currentAnswer = null;
         let conversationHistory = [];
 
-        let hands = null;
-        let gestureCamera = null;
-        let gestureEnabled = false;
-        let handDetectedDot = null;
-        let handStatusText = null;
-        let gestureProgressBar = null;
-
-        let okGestureStartTime = null;
-        let isOkGesture = false;
-        let lastOkState = false;
-        let countdownActive = false;
-        let countdownTimer = null;
-
         const notebook = JSON.parse(localStorage.getItem('notebook') || '[]');
 
         let API_URL = localStorage.getItem('apiUrl') || '/api/chat';
         let PRIMARY_MODEL = localStorage.getItem('primaryModel') || 'qwen3.5-plus';
         let FALLBACK_MODEL = localStorage.getItem('fallbackModel') || 'qwen-vl-max';
-        let OK_GESTURE_DURATION = parseInt(localStorage.getItem('gestureDuration')) || 1000;
         let userPoints = parseInt(localStorage.getItem('userPoints')) || 100;
 
         function addPoints(amount) {
@@ -3636,8 +3623,10 @@
             document.getElementById('aiWriteBtn').addEventListener('click', openAIWritePanel);
             document.getElementById('aiChatBtn').addEventListener('click', openChatPanel);
             document.getElementById('aiKnowledgeBtn').addEventListener('click', openAIKnowledgePanel);
-            document.getElementById('aiAuditBtn').addEventListener('click', openAIAuditPanel);
-            document.getElementById('aiEncyclopediaBtn').addEventListener('click', openAIEncyclopediaPanel);
+            const aiAuditBtn = document.getElementById('aiAuditBtn');
+            if (aiAuditBtn) aiAuditBtn.addEventListener('click', openAIAuditPanel);
+            const aiEncyclopediaBtn = document.getElementById('aiEncyclopediaBtn');
+            if (aiEncyclopediaBtn) aiEncyclopediaBtn.addEventListener('click', openAIEncyclopediaPanel);
             document.getElementById('aiCodeBtn').addEventListener('click', openAICodePanel);
 
             document.getElementById('backToCamera').addEventListener('click', hideAIPanel);
@@ -3730,7 +3719,7 @@
             chatInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    sendChatMessage();
+                    sendFollowUpMessage();
                 }
             });
 
@@ -3739,7 +3728,7 @@
                 chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
             });
 
-            chatSendBtn.addEventListener('click', sendChatMessage);
+            chatSendBtn.addEventListener('click', sendFollowUpMessage);
 
             document.getElementById('chatPanelInput').addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -3798,153 +3787,6 @@
             updatePointsDisplay();
         }
 
-        async function initMediaPipe() {
-            if (typeof Hands === 'undefined') {
-                console.log('MediaPipe Hands not loaded, skipping gesture detection');
-                return;
-            }
-            
-            hands = new Hands({
-                locateFile: (file) => {
-                    return `lib/${file}`;
-                }
-            });
-
-            hands.setOptions({
-                maxNumHands: 1,
-                modelComplexity: 1,
-                minDetectionConfidence: 0.7,
-                minTrackingConfidence: 0.5
-            });
-
-            hands.onResults(onHandResults);
-        }
-
-        function onHandResults(results) {
-            if (!handCtx || !gestureEnabled || countdownActive) return;
-
-            handCtx.clearRect(0, 0, handCanvas.width, handCanvas.height);
-
-            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                const landmarks = results.multiHandLandmarks[0];
-                
-                drawConnectors(handCtx, landmarks, HAND_CONNECTIONS, {color: '#00d4aa', lineWidth: 2});
-                drawLandmarks(handCtx, landmarks, {color: '#f59e0b', lineWidth: 1, radius: 3});
-
-                const isOk = detectOKGesture(landmarks);
-                
-                if (isOk) {
-                    handDetectedDot.classList.remove('detected');
-                    handDetectedDot.classList.add('ok-gesture');
-                    handStatusText.textContent = 'OK手势 - 保持1秒开始倒计时';
-                    document.getElementById('modeIndicator').classList.add('gesture-detected');
-
-                    if (!lastOkState) {
-                        okGestureStartTime = Date.now();
-                        isOkGesture = true;
-                    }
-
-                    if (isOkGesture && okGestureStartTime) {
-                        const elapsed = Date.now() - okGestureStartTime;
-                        const progress = Math.min(elapsed / OK_GESTURE_DURATION * 100, 100);
-                        gestureProgressBar.style.width = progress + '%';
-
-                        if (elapsed >= OK_GESTURE_DURATION) {
-                            startCountdown();
-                            isOkGesture = false;
-                            okGestureStartTime = null;
-                            gestureProgressBar.style.width = '0%';
-                        }
-                    }
-                } else {
-                    handDetectedDot.classList.remove('ok-gesture');
-                    handDetectedDot.classList.add('detected');
-                    handStatusText.textContent = '检测到手部';
-                    document.getElementById('modeIndicator').classList.remove('gesture-detected');
-                    gestureProgressBar.style.width = '0%';
-                    isOkGesture = false;
-                    okGestureStartTime = null;
-                }
-                
-                lastOkState = isOk;
-            } else {
-                handDetectedDot.classList.remove('detected', 'ok-gesture');
-                handStatusText.textContent = '未检测到手';
-                document.getElementById('modeIndicator').classList.remove('gesture-detected');
-                gestureProgressBar.style.width = '0%';
-                isOkGesture = false;
-                okGestureStartTime = null;
-                lastOkState = false;
-            }
-        }
-
-        function startCountdown() {
-            countdownActive = true;
-            const okIndicator = document.getElementById('okGestureIndicator');
-            const countdownNumber = document.getElementById('countdownNumber');
-            const countdownText = document.getElementById('countdownText');
-            
-            okIndicator.classList.add('show');
-            countdownText.textContent = '请移开手势';
-            
-            let count = 3;
-            countdownNumber.textContent = count;
-            countdownNumber.classList.add('countdown-tick');
-            
-            countdownTimer = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    countdownNumber.textContent = count;
-                    countdownNumber.classList.remove('countdown-tick');
-                    void countdownNumber.offsetWidth;
-                    countdownNumber.classList.add('countdown-tick');
-                } else {
-                    clearInterval(countdownTimer);
-                    countdownTimer = null;
-                    okIndicator.classList.remove('show');
-                    countdownActive = false;
-                    captureFullFrame();
-                }
-            }, 1000);
-        }
-
-        function cancelCountdown() {
-            if (countdownTimer) {
-                clearInterval(countdownTimer);
-                countdownTimer = null;
-            }
-            countdownActive = false;
-            const okIndicator = document.getElementById('okGestureIndicator');
-            okIndicator.classList.remove('show');
-            showToast('已取消拍照');
-        }
-
-        function detectOKGesture(landmarks) {
-            const thumbTip = landmarks[4];
-            const indexTip = landmarks[8];
-            const indexPip = landmarks[6];
-            const indexMcp = landmarks[5];
-            const middleTip = landmarks[12];
-            const middlePip = landmarks[10];
-            const ringTip = landmarks[16];
-            const ringPip = landmarks[14];
-            const pinkyTip = landmarks[20];
-            const pinkyPip = landmarks[18];
-
-            const thumbIndexDist = Math.sqrt(
-                Math.pow(thumbTip.x - indexTip.x, 2) + 
-                Math.pow(thumbTip.y - indexTip.y, 2)
-            );
-
-            const isOkCircle = thumbIndexDist < 0.08;
-
-            const isMiddleExtended = middleTip.y < middlePip.y;
-            const isRingExtended = ringTip.y < ringPip.y;
-            const isPinkyExtended = pinkyTip.y < pinkyPip.y;
-
-            return isOkCircle && isMiddleExtended && isRingExtended && isPinkyExtended;
-        }
-
         function captureFullFrame() {
             if (!stream) {
                 showToast('请先启动摄像头');
@@ -4001,26 +3843,6 @@
                 console.error('摄像头启动失败:', err);
                 showToast('摄像头启动失败，请检查权限');
             }
-        }
-
-        function startGestureDetection() {
-            if (!hands) return;
-            
-            gestureEnabled = true;
-            document.getElementById('gestureStatus').classList.add('active');
-            
-            gestureCamera = new Camera(videoElement, {
-                onFrame: async () => {
-                    if (gestureEnabled && hands) {
-                        await hands.send({image: videoElement});
-                    }
-                },
-                width: videoElement.videoWidth,
-                height: videoElement.videoHeight
-            });
-            
-            gestureCamera.start();
-            showToast('手势识别已启动，比OK手势拍照上传');
         }
 
         function toggleSelectionMode() {
@@ -4134,6 +3956,7 @@
         }
 
         function showAIPanel() {
+            closeAllSidebars();
             document.getElementById('aiPanel').classList.add('active');
             document.getElementById('thinkingIndicator').classList.remove('hidden');
             document.getElementById('answerContent').classList.add('hidden');
@@ -4292,7 +4115,7 @@
             }
         }
 
-        async function sendChatMessage() {
+        async function sendFollowUpMessage() {
             const chatInput = document.getElementById('chatInput');
             const message = chatInput.value.trim();
             
@@ -4301,8 +4124,8 @@
             chatInput.value = '';
             chatInput.style.height = 'auto';
 
-            const chatHistory = document.getElementById('chatHistory');
-            chatHistory.innerHTML += `
+            const chatHistoryEl = document.getElementById('chatHistory');
+            chatHistoryEl.innerHTML += `
                 <div class="chat-message user">
                     <div class="chat-message-label">追问</div>
                     <div>${escapeHtml(message)}</div>
@@ -4388,7 +4211,7 @@
                     }
                 }
 
-                chatHistory.innerHTML += `
+                chatHistoryEl.innerHTML += `
                     <div class="chat-message assistant">
                         <div class="chat-message-label">AI回答</div>
                         <div>${formatAnswer(fullContent)}</div>
@@ -4453,6 +4276,7 @@
         }
 
         function openNotebook() {
+            closeAllSidebars();
             document.getElementById('notebookPanel').classList.add('active');
             updateNotebookDisplay();
         }
@@ -4462,6 +4286,7 @@
         }
 
         function openSettings() {
+            closeAllSidebars();
             loadSettings();
             document.getElementById('settingsPanel').classList.add('active');
         }
@@ -4476,7 +4301,21 @@
 
         let chatHistory = [];
 
+        function closeAllSidebars() {
+            const sidebars = [
+                'chatPanel', 'aiWriteSidebar', 'aiKnowledgeSidebar', 
+                'aiAuditSidebar', 'aiEncyclopediaSidebar', 'aiCodeSidebar',
+                'gameSidebar', 'mazeSidebar', 'dailyRewardSidebar', 'calculatorSidebar',
+                'aiPanel', 'notebookSidebar', 'settingsSidebar'
+            ];
+            sidebars.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('active');
+            });
+        }
+
         function openChatPanel() {
+            closeAllSidebars();
             document.getElementById('chatPanel').classList.add('active');
         }
 
@@ -4733,7 +4572,7 @@
                     <img class="card-image" src="${note.image}" alt="题目">
                     <div class="card-body">
                         <div class="card-date">${note.date}</div>
-                        <div class="card-preview">${note.answer.substring(0, 100)}...</div>
+                        <div class="card-preview">${(note.answer || '暂无答案').substring(0, 100)}...</div>
                         <div class="card-actions">
                             <button class="card-btn view" onclick="viewNote(${note.id})">查看详情</button>
                             <button class="card-btn delete" onclick="deleteNote(${note.id})">删除</button>
@@ -4768,6 +4607,7 @@
         }
 
         function openAIWritePanel() {
+            closeAllSidebars();
             document.getElementById('aiWriteSidebar').classList.add('active');
         }
 
@@ -4776,6 +4616,7 @@
         }
 
         function openAIKnowledgePanel() {
+            closeAllSidebars();
             document.getElementById('aiKnowledgeSidebar').classList.add('active');
         }
 
@@ -4784,6 +4625,7 @@
         }
 
         function openAIAuditPanel() {
+            closeAllSidebars();
             document.getElementById('aiAuditSidebar').classList.add('active');
         }
 
@@ -4792,6 +4634,7 @@
         }
 
         function openAIEncyclopediaPanel() {
+            closeAllSidebars();
             document.getElementById('aiEncyclopediaSidebar').classList.add('active');
         }
 
@@ -4800,6 +4643,7 @@
         }
 
         function openAICodePanel() {
+            closeAllSidebars();
             document.getElementById('aiCodeSidebar').classList.add('active');
         }
 
@@ -4808,6 +4652,7 @@
         }
 
         function openGamePanel() {
+            closeAllSidebars();
             document.getElementById('gamePointsDisplay').textContent = userPoints;
             document.getElementById('gameSidebar').classList.add('active');
         }
@@ -4888,25 +4733,25 @@
         }
 
         function updateObstacles() {
-            if (obstacles.length === 0 || (400 - lastObstacleX) >= MIN_OBSTACLE_DISTANCE) {
-                if (Math.random() < 0.015) {
-                    const obstacleHeight = Math.random() < 0.5 ? 30 : 40;
-                    const obstacleWidth = Math.random() < 0.5 ? 25 : 35;
-                    obstacles.push({
-                        x: 400,
-                        y: GROUND_Y - obstacleHeight,
-                        width: obstacleWidth,
-                        height: obstacleHeight
-                    });
-                    lastObstacleX = 400;
-                }
+            const lastObstacle = obstacles[obstacles.length - 1];
+            const canSpawn = obstacles.length === 0 || (lastObstacle && lastObstacle.x < 400 - MIN_OBSTACLE_DISTANCE);
+            
+            if (canSpawn && Math.random() < 0.02) {
+                const obstacleHeight = Math.random() < 0.5 ? 30 : 40;
+                const obstacleWidth = Math.random() < 0.5 ? 25 : 35;
+                obstacles.push({
+                    x: 400,
+                    y: GROUND_Y - obstacleHeight,
+                    width: obstacleWidth,
+                    height: obstacleHeight
+                });
             }
 
-            obstacles.forEach((obstacle, index) => {
-                obstacle.x -= gameSpeed;
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= gameSpeed;
 
-                if (obstacle.x + obstacle.width < 0) {
-                    obstacles.splice(index, 1);
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
                     score += 10;
                     document.getElementById('scoreValue').textContent = score;
 
@@ -4917,7 +4762,7 @@
                         }
                     }
                 }
-            });
+            }
         }
 
         function drawGame(ctx) {
@@ -5068,6 +4913,7 @@
         }
 
         function openMazePanel() {
+            closeAllSidebars();
             document.getElementById('mazePointsDisplay').textContent = userPoints;
             document.getElementById('mazeSidebar').classList.add('active');
         }
@@ -5105,6 +4951,7 @@
         }
 
         function openDailyRewardPanel() {
+            closeAllSidebars();
             const canClaim = checkDailyReward();
             const statusDiv = document.getElementById('dailyRewardStatus');
             const claimBtn = document.getElementById('claimDailyRewardBtn');
@@ -5135,6 +4982,7 @@
         let startMenuOpen = false;
 
         function openCalculatorPanel() {
+            closeAllSidebars();
             document.getElementById('calculatorSidebar').classList.add('active');
             hideStartMenu();
         }
