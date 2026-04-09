@@ -1,9 +1,11 @@
 export const config = {
     api: {
-        bodyParser: true,
+        bodyParser: {
+            sizeLimit: '10mb',
+        },
         responseLimit: false,
+        externalResolver: true,
     },
-    maxDuration: 60,
 };
 
 export default async function handler(req, res) {
@@ -22,32 +24,35 @@ export default async function handler(req, res) {
     const API_KEY = process.env.DASHSCOPE_API_KEY;
     
     if (!API_KEY) {
-        console.error('DASHSCOPE_API_KEY not found in environment variables');
+        console.error('DASHSCOPE_API_KEY not found');
         return res.status(500).json({ error: 'API Key not configured' });
     }
 
     const API_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
 
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 55000);
+        console.log('[API] Starting request to DashScope...');
+        console.log('[API] Model:', req.body?.model);
+        console.log('[API] Messages count:', req.body?.messages?.length);
 
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${API_KEY}`
+                'Authorization': `Bearer ${API_KEY}`,
+                'Accept': 'text/event-stream'
             },
-            body: JSON.stringify(req.body),
-            signal: controller.signal
+            body: JSON.stringify(req.body)
         });
 
-        clearTimeout(timeoutId);
+        console.log('[API] Response status:', response.status);
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('DashScope API error:', response.status, errorText);
-            return res.status(response.status).json({ error: errorText });
+            console.error('[API] Error:', response.status, errorText);
+            return res.status(response.status).json({ 
+                error: `DashScope API error: ${errorText}` 
+            });
         }
 
         res.setHeader('Content-Type', 'text/event-stream');
@@ -57,21 +62,23 @@ export default async function handler(req, res) {
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
+        let chunkCount = 0;
 
         while (true) {
             const { done, value } = await reader.read();
-            if (done) break;
+            if (done) {
+                console.log('[API] Stream completed, total chunks:', chunkCount);
+                break;
+            }
             
             const chunk = decoder.decode(value, { stream: true });
+            chunkCount++;
             res.write(chunk);
         }
 
         res.end();
     } catch (error) {
-        console.error('Proxy error:', error);
-        if (error.name === 'AbortError') {
-            return res.status(504).json({ error: 'Request timeout' });
-        }
+        console.error('[API] Proxy error:', error.message);
         res.status(500).json({ error: 'Internal server error: ' + error.message });
     }
 }
