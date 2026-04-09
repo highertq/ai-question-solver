@@ -21,20 +21,14 @@
             --accent-green: #10b981;
             --accent-cyan: #06b6d4;
             --accent-orange: #f97316;
+            --accent-red: #ef4444;
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
             --radius-xl: 16px;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Noto Sans SC', sans-serif;
@@ -52,32 +46,26 @@
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
             padding: 24px 0;
             border-bottom: 1px solid var(--border-color);
         }
 
         .header h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .header p {
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
+        .header p { color: var(--text-secondary); font-size: 14px; }
 
-        .activation-panel {
+        .setup-panel {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(10, 15, 26, 0.95);
             z-index: 1000;
             display: flex;
@@ -85,172 +73,155 @@
             justify-content: center;
         }
 
-        .activation-content {
+        .setup-panel.hidden { display: none; }
+
+        .setup-content {
             background: var(--bg-card);
             border-radius: var(--radius-xl);
-            padding: 48px 40px;
-            text-align: center;
-            max-width: 400px;
+            padding: 40px;
+            max-width: 560px;
             width: 90%;
             border: 1px solid var(--border-color);
             box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
         }
 
-        .activation-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-        }
-
-        .activation-icon svg {
-            width: 40px;
-            height: 40px;
-            color: var(--bg-primary);
-        }
-
-        .activation-content h2 {
-            font-size: 24px;
+        .setup-content h2 {
+            font-size: 22px;
             font-weight: 600;
             margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .activation-content p {
-            color: var(--text-secondary);
-            margin-bottom: 32px;
-        }
+        .setup-content > p { color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; }
 
-        .activation-form {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .activation-input {
-            flex: 1;
+        .setup-textarea {
+            width: 100%;
             background: var(--bg-elevated);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 12px 16px;
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            min-height: 180px;
+            line-height: 1.5;
         }
 
-        .activation-input:focus {
-            border-color: var(--accent-blue);
-            outline: none;
+        .setup-textarea:focus { border-color: var(--accent-orange); outline: none; }
+
+        .setup-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
 
-        .activation-btn {
+        .setup-hint code {
+            background: var(--bg-elevated);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .setup-actions { display: flex; gap: 12px; }
+
+        .setup-btn {
+            flex: 1;
             padding: 12px 24px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            border: none;
             border-radius: var(--radius-md);
-            color: var(--bg-primary);
+            border: none;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .activation-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        .setup-btn.primary {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink));
+            color: #fff;
         }
 
-        .activation-status {
+        .setup-btn.secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .setup-btn:hover { transform: translateY(-2px); }
+
+        .setup-status {
+            margin-top: 12px;
             font-size: 13px;
-            color: var(--text-secondary);
             min-height: 20px;
         }
 
-        .activation-status.success {
-            color: var(--accent-green);
-        }
+        .setup-status.success { color: var(--accent-green); }
+        .setup-status.error { color: var(--accent-red); }
 
-        .activation-status.error {
-            color: #ef4444;
-        }
-
-        .generate-code-btn {
-            margin-top: 16px;
-            padding: 8px 16px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .generate-code-btn:hover {
-            border-color: var(--accent-blue);
-            color: var(--accent-blue);
-        }
-
-        .question-bank-header {
+        .toolbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 32px;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .question-bank-header h2 {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .question-bank-actions {
-            display: flex;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
             gap: 12px;
         }
 
+        .toolbar-left { display: flex; align-items: center; gap: 12px; }
+
+        .toolbar h2 { font-size: 20px; font-weight: 600; }
+
+        .question-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--bg-elevated);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .toolbar-actions { display: flex; gap: 8px; }
+
         .action-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
             border-radius: var(--radius-md);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .action-btn.primary {
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            color: var(--bg-primary);
+            color: #fff;
         }
 
-        .action-btn.secondary {
-            background: var(--bg-elevated);
-            color: var(--text-primary);
+        .action-btn.ghost {
+            background: transparent;
+            color: var(--text-muted);
             border: 1px solid var(--border-color);
         }
 
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
-        }
+        .action-btn:hover { transform: translateY(-1px); }
 
-        .question-bank-search {
+        .search-bar {
             display: flex;
-            gap: 16px;
-            margin-bottom: 32px;
+            gap: 12px;
+            margin-bottom: 24px;
             flex-wrap: wrap;
         }
 
-        .search-input-group {
+        .search-input-wrap {
             flex: 1;
-            min-width: 300px;
+            min-width: 200px;
             position: relative;
         }
 
@@ -259,48 +230,29 @@
             background: var(--bg-elevated);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px 48px 12px 16px;
+            padding: 10px 40px 10px 14px;
             color: var(--text-primary);
-            font-size: 14px;
-            transition: border-color 0.2s ease;
+            font-size: 13px;
         }
 
-        .search-input:focus {
-            border-color: var(--accent-blue);
-            outline: none;
-        }
+        .search-input:focus { border-color: var(--accent-blue); outline: none; }
 
-        .search-btn {
+        .search-icon {
             position: absolute;
-            right: 8px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            background: transparent;
-            border: none;
             color: var(--text-muted);
-            cursor: pointer;
-            padding: 8px;
-            border-radius: var(--radius-sm);
-            transition: all 0.2s ease;
-        }
-
-        .search-btn:hover {
-            background: var(--bg-card);
-            color: var(--accent-blue);
-        }
-
-        .question-category {
-            min-width: 200px;
         }
 
         .category-select {
-            width: 100%;
+            min-width: 140px;
             background: var(--bg-elevated);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px 16px;
+            padding: 10px 32px 10px 14px;
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
@@ -308,267 +260,243 @@
             background-position: right 10px center;
         }
 
-        .category-select:focus {
-            border-color: var(--accent-blue);
-            outline: none;
-        }
+        .category-select:focus { border-color: var(--accent-blue); outline: none; }
 
-        .question-bank-grid {
+        .question-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
 
-        .question-card {
+        .q-card {
             background: var(--bg-card);
             border-radius: var(--radius-lg);
             overflow: hidden;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        .question-card:hover {
+        .q-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
             border-color: var(--accent-blue);
         }
 
-        .question-card-image {
+        .q-card-cover {
             width: 100%;
-            height: 180px;
+            height: 170px;
             object-fit: cover;
             background: var(--bg-secondary);
+            display: block;
         }
 
-        .question-card-body {
-            padding: 20px;
-        }
+        .q-card-body { padding: 16px; }
 
-        .question-card-category {
+        .q-card-badge {
             display: inline-block;
-            padding: 4px 12px;
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent-blue);
-            border-radius: var(--radius-sm);
+            padding: 3px 10px;
+            border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
-        .question-card-description {
-            font-size: 14px;
+        .q-card-badge.math { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+        .q-card-badge.physics { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+        .q-card-badge.chemistry { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+        .q-card-badge.biology { background: rgba(6,182,212,0.15); color: var(--accent-cyan); }
+        .q-card-badge.english { background: rgba(249,115,22,0.15); color: var(--accent-orange); }
+        .q-card-badge.other { background: rgba(236,72,153,0.15); color: var(--accent-pink); }
+
+        .q-card-desc {
+            font-size: 13px;
             color: var(--text-secondary);
             line-height: 1.5;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .question-card-meta {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
-
-        .question-card-actions {
+        .q-card-meta {
             display: flex;
+            align-items: center;
             gap: 8px;
+            font-size: 11px;
+            color: var(--text-muted);
         }
 
-        .question-card-btn {
-            flex: 1;
-            padding: 8px;
-            border-radius: var(--radius-sm);
-            border: none;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+        .q-card-meta svg { width: 12px; height: 12px; flex-shrink: 0; }
 
-        .question-card-btn.view {
+        .q-card-type {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
             background: var(--bg-elevated);
-            color: var(--text-primary);
-        }
-
-        .question-card-btn.download {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent-blue);
-        }
-
-        .question-card-btn:hover {
-            opacity: 0.8;
+            color: var(--text-muted);
+            margin-left: auto;
         }
 
         .empty-state {
             text-align: center;
-            padding: 64px 24px;
+            padding: 60px 24px;
             color: var(--text-muted);
         }
 
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 16px;
-            opacity: 0.5;
+        .empty-state svg { width: 56px; height: 56px; margin-bottom: 12px; opacity: 0.4; }
+        .empty-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary); }
+        .empty-state p { font-size: 13px; }
+
+        .loading-state {
+            text-align: center;
+            padding: 60px 24px;
         }
 
-        .empty-state h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
         }
 
-        .empty-state p {
-            font-size: 14px;
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .upload-question-modal {
+        .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 15, 26, 0.9);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 15, 26, 0.85);
             z-index: 1000;
             display: none;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
-        .upload-question-modal.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
-        .upload-question-content {
+        .modal-box {
             background: var(--bg-card);
             border-radius: var(--radius-xl);
-            padding: 32px;
-            max-width: 600px;
-            width: 90%;
+            max-width: 560px;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             border: 1px solid var(--border-color);
             box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
         }
 
-        .upload-question-header {
+        .modal-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
+            padding: 20px 24px;
             border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 1;
         }
 
-        .upload-question-header h2 {
-            font-size: 20px;
-            font-weight: 600;
-        }
+        .modal-header h2 { font-size: 18px; font-weight: 600; }
 
-        .close-btn {
+        .modal-close {
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
-            padding: 4px;
+            padding: 4px 8px;
             border-radius: var(--radius-sm);
             transition: all 0.2s ease;
         }
 
-        .close-btn:hover {
-            background: var(--bg-elevated);
-            color: var(--text-primary);
-        }
+        .modal-close:hover { background: var(--bg-elevated); color: var(--text-primary); }
 
-        .upload-section {
-            margin-bottom: 24px;
-        }
+        .modal-body { padding: 24px; }
 
-        .upload-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-        }
-
-        .upload-area {
-            position: relative;
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: var(--bg-elevated);
-        }
-
-        .upload-area:hover {
-            border-color: var(--accent-purple);
-            background: rgba(139, 92, 246, 0.05);
-        }
-
-        .upload-input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .upload-placeholder {
+        .type-toggle {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .upload-placeholder svg {
-            width: 48px;
-            height: 48px;
-            color: var(--text-muted);
-        }
-
-        .upload-placeholder p {
-            font-size: 16px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .upload-placeholder small {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .upload-preview {
-            max-width: 100%;
-            max-height: 300px;
+            background: var(--bg-elevated);
             border-radius: var(--radius-md);
-            object-fit: contain;
-        }
-
-        .form-section {
+            padding: 4px;
             margin-bottom: 20px;
         }
 
+        .type-toggle-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .type-toggle-btn.active {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #fff;
+        }
+
+        .form-group { margin-bottom: 18px; }
+
         .form-label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
+
+        .form-label .required { color: var(--accent-red); margin-left: 2px; }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .form-input:focus { border-color: var(--accent-purple); outline: none; }
+
+        .form-textarea {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: 'Noto Sans SC', sans-serif;
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+        }
+
+        .form-textarea:focus { border-color: var(--accent-purple); outline: none; }
 
         .form-select {
             width: 100%;
             background: var(--bg-elevated);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px 16px;
+            padding: 10px 32px 10px 14px;
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
@@ -576,62 +504,183 @@
             background-position: right 10px center;
         }
 
-        .form-select:focus {
-            border-color: var(--accent-purple);
-            outline: none;
-        }
+        .form-select:focus { border-color: var(--accent-purple); outline: none; }
 
-        .form-textarea {
-            width: 100%;
+        .upload-area {
+            position: relative;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 32px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
             background: var(--bg-elevated);
-            border: 1px solid var(--border-color);
+        }
+
+        .upload-area:hover { border-color: var(--accent-purple); background: rgba(139, 92, 246, 0.05); }
+        .upload-area.dragover { border-color: var(--accent-purple); background: rgba(139, 92, 246, 0.1); }
+
+        .upload-area input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+
+        .upload-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-placeholder svg { width: 40px; height: 40px; color: var(--text-muted); }
+        .upload-placeholder p { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+        .upload-placeholder small { font-size: 11px; color: var(--text-muted); }
+
+        .upload-preview-wrap { position: relative; display: inline-block; }
+
+        .upload-preview {
+            max-width: 100%;
+            max-height: 240px;
             border-radius: var(--radius-md);
-            padding: 12px 16px;
-            color: var(--text-primary);
+            object-fit: contain;
+        }
+
+        .upload-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.9);
+            color: #fff;
+            border: none;
+            cursor: pointer;
             font-size: 14px;
-            font-family: 'Noto Sans SC', sans-serif;
-            resize: vertical;
-            min-height: 100px;
-            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .form-textarea:focus {
-            border-color: var(--accent-purple);
-            outline: none;
-        }
-
-        .form-actions {
+        .form-row {
             display: flex;
             gap: 12px;
-            margin-top: 32px;
         }
 
-        .form-btn {
+        .form-row .form-group { flex: 1; }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-card);
+        }
+
+        .btn {
             flex: 1;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: var(--radius-md);
             border: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .form-btn.primary {
+        .btn.primary {
             background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
-            color: var(--bg-primary);
+            color: #fff;
         }
 
-        .form-btn.secondary {
+        .btn.primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.secondary {
             background: var(--bg-elevated);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
         }
 
-        .form-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+        .btn:hover:not(:disabled) { transform: translateY(-1px); }
+
+        .detail-cover {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
         }
+
+        .detail-image {
+            width: 100%;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            cursor: zoom-in;
+        }
+
+        .detail-text {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            white-space: pre-wrap;
+        }
+
+        .detail-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .detail-info-item svg { width: 14px; height: 14px; }
+
+        .detail-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .detail-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .detail-btn.download {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+        }
+
+        .detail-btn.share {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: #fff;
+        }
+
+        .detail-btn:hover { transform: translateY(-1px); }
 
         .toast {
             position: fixed;
@@ -641,490 +690,905 @@
             color: var(--text-primary);
             padding: 12px 20px;
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transform: translateY(-20px);
             transition: all 0.3s ease;
-            z-index: 1001;
+            z-index: 2000;
             border-left: 4px solid var(--accent-blue);
+            font-size: 13px;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error { border-left-color: var(--accent-red); }
+        .toast.success { border-left-color: var(--accent-green); }
+
+        .image-viewer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+
+        .image-viewer img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            border-radius: var(--radius-md);
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 16px;
-            }
-
-            .question-bank-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 16px;
-            }
-
-            .question-bank-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .question-bank-search {
-                flex-direction: column;
-            }
-
-            .search-input-group,
-            .question-category {
-                width: 100%;
-            }
-
-            .question-bank-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .activation-form {
-                flex-direction: column;
-            }
+            .container { padding: 16px; }
+            .toolbar { flex-direction: column; align-items: flex-start; }
+            .toolbar-actions { width: 100%; }
+            .search-bar { flex-direction: column; }
+            .search-input-wrap, .category-select { width: 100%; min-width: unset; }
+            .question-grid { grid-template-columns: 1fr; }
+            .form-row { flex-direction: column; gap: 0; }
+            .setup-content { padding: 24px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="setup-panel" id="setupPanel">
+        <div class="setup-content">
+            <h2>🔥 配置 Firebase</h2>
+            <p>首次使用需要配置 Firebase 以启用云端题库功能（完全免费）</p>
+            <textarea class="setup-textarea" id="firebaseConfigInput" placeholder='粘贴 Firebase 配置，格式如：
+{
+  apiKey: "AIza...",
+  authDomain: "xxx.firebaseapp.com",
+  projectId: "xxx",
+  storageBucket: "xxx.appspot.com",
+  messagingSenderId: "123",
+  appId: "1:123:web:abc"
+}'></textarea>
+            <div class="setup-hint">
+                📌 获取方式：打开 <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent-blue)">Firebase 控制台</a> → 项目设置 → 您的应用 → SDK 安装配置 → 复制 <code>firebaseConfig</code> 对象内容
+            </div>
+            <div class="setup-actions">
+                <button class="setup-btn primary" id="setupConnectBtn">连接 Firebase</button>
+                <button class="setup-btn secondary" id="setupSkipBtn">暂不配置</button>
+            </div>
+            <div class="setup-status" id="setupStatus"></div>
+        </div>
+    </div>
+
+    <div class="container" id="mainApp" style="display:none">
         <div class="header">
-            <h1>识题王 - 线上题库</h1>
-            <p>汇聚优质题目，助力学习成长</p>
+            <h1>📚 识题王 - 线上题库</h1>
+            <p>汇聚优质题目，共享学习资源</p>
         </div>
 
-        <div class="question-bank-header">
-            <h2>题目列表</h2>
-            <div class="question-bank-actions">
-                <button class="action-btn primary" id="uploadQuestionBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    上传题目
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <h2>题目列表</h2>
+                <span class="question-count" id="questionCount">0 题</span>
+            </div>
+            <div class="toolbar-actions">
+                <button class="action-btn ghost" id="settingsBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    设置
+                </button>
+                <button class="action-btn primary" id="uploadBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    分享题目
                 </button>
             </div>
         </div>
 
-        <div class="question-bank-search">
-            <div class="search-input-group">
-                <input type="text" id="questionSearchInput" placeholder="搜索题目..." class="search-input">
-                <button class="search-btn" id="questionSearchBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                </button>
+        <div class="search-bar">
+            <div class="search-input-wrap">
+                <input type="text" id="searchInput" placeholder="搜索题目内容..." class="search-input">
+                <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </div>
-            <div class="question-category">
-                <select id="questionCategorySelect" class="category-select">
-                    <option value="all">全部分类</option>
-                    <option value="math">数学</option>
-                    <option value="physics">物理</option>
-                    <option value="chemistry">化学</option>
-                    <option value="biology">生物</option>
-                    <option value="english">英语</option>
-                    <option value="other">其他</option>
-                </select>
-            </div>
+            <select id="categoryFilter" class="category-select">
+                <option value="all">全部分类</option>
+                <option value="math">数学</option>
+                <option value="physics">物理</option>
+                <option value="chemistry">化学</option>
+                <option value="biology">生物</option>
+                <option value="english">英语</option>
+                <option value="other">其他</option>
+            </select>
         </div>
 
-        <div class="question-bank-grid" id="questionBankGrid"></div>
-        <div class="empty-state hidden" id="emptyQuestionBank">
+        <div id="loadingState" class="loading-state" style="display:none">
+            <div class="spinner"></div>
+            <p style="color:var(--text-muted);font-size:13px">加载题库中...</p>
+        </div>
+
+        <div class="question-grid" id="questionGrid"></div>
+
+        <div class="empty-state" id="emptyState" style="display:none">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                <line x1="8" y1="7" x2="16" y2="7"/>
-                <line x1="8" y1="11" x2="16" y2="11"/>
             </svg>
             <h3>题库为空</h3>
-            <p>请上传题目或等待其他用户分享</p>
+            <p>点击「分享题目」上传第一道题吧</p>
         </div>
     </div>
 
-    <div class="activation-panel" id="activationPanel">
-        <div class="activation-content">
-            <div class="activation-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M21 12V7.5a2.5 2.5 0 0 0-2.5-2.5H16m0 0H9.5a2.5 2.5 0 0 0-2.5 2.5V12m0 0v4.5a2.5 2.5 0 0 0 2.5 2.5H16m0 0h2.5a2.5 2.5 0 0 0 2.5-2.5V12"/>
-                    <path d="M12 12v4m0 0v1m0-1h1m-1 0H9"/>
-                </svg>
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>📝 分享题目</h2>
+                <button class="modal-close" id="uploadCloseBtn">&times;</button>
             </div>
-            <h2>激活线上题库</h2>
-            <p>请输入激活码以访问线上题库功能</p>
-            <div class="activation-form">
-                <input type="text" id="activationCodeInput" placeholder="输入激活码" class="activation-input">
-                <button class="activation-btn" id="activateBtn">激活</button>
-            </div>
-            <div class="activation-status" id="activationStatus"></div>
-            <button class="generate-code-btn" id="generateCodeBtn">生成测试激活码</button>
-        </div>
-    </div>
+            <div class="modal-body">
+                <div class="type-toggle">
+                    <button class="type-toggle-btn active" data-type="text" id="typeTextBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        文字题目
+                    </button>
+                    <button class="type-toggle-btn" data-type="image" id="typeImageBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        图片题目
+                    </button>
+                </div>
 
-    <div class="upload-question-modal" id="uploadQuestionModal">
-        <div class="upload-question-content">
-            <div class="upload-question-header">
-                <h2>上传题目</h2>
-                <button class="close-btn" id="closeUploadModal">&times;</button>
-            </div>
-            
-            <div class="upload-section">
-                <label class="upload-label">题目图片</label>
-                <div class="upload-area" id="uploadArea">
-                    <input type="file" id="questionImageInput" accept="image/*" class="upload-input">
-                    <div class="upload-placeholder">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7 10 12 15 17 10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        <p>点击或拖拽上传图片</p>
-                        <small>支持 JPG、PNG 格式，最大 5MB</small>
+                <div id="textInputSection">
+                    <div class="form-group">
+                        <label class="form-label">题目内容<span class="required">*</span></label>
+                        <textarea id="questionText" class="form-textarea" placeholder="请输入完整的题目内容...&#10;&#10;例如：已知函数 f(x) = x² - 2x + 1，求 f(x) 的最小值。"></textarea>
                     </div>
-                    <img id="uploadPreview" class="upload-preview hidden" src="" alt="预览">
+                </div>
+
+                <div id="imageInputSection" style="display:none">
+                    <div class="form-group">
+                        <label class="form-label">题目图片<span class="required">*</span></label>
+                        <div class="upload-area" id="uploadArea">
+                            <input type="file" id="imageFileInput" accept="image/*">
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                                    <polyline points="21 15 16 10 5 21"/>
+                                </svg>
+                                <p>点击或拖拽上传图片</p>
+                                <small>支持 JPG/PNG，建议不超过 3MB</small>
+                            </div>
+                            <div class="upload-preview-wrap" id="previewWrap" style="display:none">
+                                <img id="imagePreview" class="upload-preview" src="" alt="预览">
+                                <button class="upload-remove" id="removeImageBtn">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">题型分类<span class="required">*</span></label>
+                        <select id="uploadCategory" class="form-select">
+                            <option value="math">数学</option>
+                            <option value="physics">物理</option>
+                            <option value="chemistry">化学</option>
+                            <option value="biology">生物</option>
+                            <option value="english">英语</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">分享人<span class="required">*</span></label>
+                        <input type="text" id="sharerName" class="form-input" placeholder="你的昵称">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">题目描述</label>
+                    <textarea id="questionDesc" class="form-textarea" style="min-height:60px" placeholder="简要描述这道题（选填，方便他人搜索）"></textarea>
                 </div>
             </div>
-            
-            <div class="form-section">
-                <label class="form-label">题型分类</label>
-                <select id="uploadCategorySelect" class="form-select">
-                    <option value="math">数学</option>
-                    <option value="physics">物理</option>
-                    <option value="chemistry">化学</option>
-                    <option value="biology">生物</option>
-                    <option value="english">英语</option>
-                    <option value="other">其他</option>
-                </select>
+            <div class="modal-footer">
+                <button class="btn secondary" id="uploadCancelBtn">取消</button>
+                <button class="btn primary" id="uploadSubmitBtn">分享到题库</button>
             </div>
-            
-            <div class="form-section">
-                <label class="form-label">题目描述</label>
-                <textarea id="questionDescription" placeholder="请简要描述题目内容..." class="form-textarea"></textarea>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>📋 题目详情</h2>
+                <button class="modal-close" id="detailCloseBtn">&times;</button>
             </div>
-            
-            <div class="form-actions">
-                <button class="form-btn secondary" id="cancelUploadBtn">取消</button>
-                <button class="form-btn primary" id="submitUploadBtn">上传</button>
-            </div>
+            <div class="modal-body" id="detailBody"></div>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
-    <script>
-        // 线上题库功能
-        let questionBank = [];
-        let isActivated = localStorage.getItem('questionBankActivated') === 'true';
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
-        // 生成随机16进制激活码
-        function generateActivationCode() {
-            const chars = '0123456789ABCDEF';
-            let code = '';
-            for (let i = 0; i < 16; i++) {
-                code += chars[Math.floor(Math.random() * 16)];
-            }
-            return code;
-        }
+        let app = null;
+        let db = null;
+        let storage = null;
+        let auth = null;
+        let currentUser = null;
+        let allQuestions = [];
+        let unsubscribe = null;
+        let currentUploadType = 'text';
+        let selectedImageFile = null;
 
-        // 验证激活码（这里简化处理，实际部署时应该从服务器验证）
-        function verifyActivationCode(code) {
-            // 这里可以添加服务器验证逻辑
-            // 暂时使用本地验证
-            return code.length === 16 && /^[0-9A-F]+$/.test(code);
-        }
+        const CATEGORY_MAP = {
+            math: { name: '数学', color: '#3b82f6', gradient: ['#3b82f6', '#1d4ed8'] },
+            physics: { name: '物理', color: '#8b5cf6', gradient: ['#8b5cf6', '#6d28d9'] },
+            chemistry: { name: '化学', color: '#10b981', gradient: ['#10b981', '#059669'] },
+            biology: { name: '生物', color: '#06b6d4', gradient: ['#06b6d4', '#0891b2'] },
+            english: { name: '英语', color: '#f97316', gradient: ['#f97316', '#ea580c'] },
+            other: { name: '其他', color: '#ec4899', gradient: ['#ec4899', '#db2777'] }
+        };
 
-        // 激活线上题库
-        function activateQuestionBank() {
-            const code = document.getElementById('activationCodeInput').value.trim();
-            const status = document.getElementById('activationStatus');
-            
-            if (!code) {
-                status.textContent = '请输入激活码';
-                status.className = 'activation-status error';
-                return;
-            }
-            
-            if (verifyActivationCode(code)) {
-                isActivated = true;
-                localStorage.setItem('questionBankActivated', 'true');
-                status.textContent = '激活成功！';
-                status.className = 'activation-status success';
-                setTimeout(() => {
-                    document.getElementById('activationPanel').style.display = 'none';
-                    loadQuestionBank();
-                }, 1000);
-            } else {
-                status.textContent = '激活码无效';
-                status.className = 'activation-status error';
+        function parseFirebaseConfig(text) {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                try {
+                    const fn = new Function('return ' + text);
+                    const config = fn();
+                    if (config && config.apiKey && config.projectId) return config;
+                    throw new Error('缺少必要字段');
+                } catch (e2) {
+                    throw new Error('配置格式错误，请检查后重试');
+                }
             }
         }
 
-        // 生成测试激活码
-        function generateTestCode() {
-            const code = generateActivationCode();
-            document.getElementById('activationCodeInput').value = code;
-            showToast('已生成测试激活码');
-        }
+        async function connectFirebase(config) {
+            try {
+                if (app) {
+                    try { app.delete(); } catch(e) {}
+                }
+                app = initializeApp(config);
+                db = getFirestore(app);
+                storage = getStorage(app);
+                auth = getAuth(app);
 
-        // 显示线上题库
-        function showQuestionBank() {
-            if (!isActivated) {
-                document.getElementById('activationPanel').style.display = 'flex';
-                return;
+                await signInAnonymously(auth);
+
+                localStorage.setItem('firebaseConfig', JSON.stringify(config));
+                return true;
+            } catch (error) {
+                console.error('Firebase connection error:', error);
+                throw error;
             }
-            loadQuestionBank();
         }
 
-        // 加载题库数据
-        function loadQuestionBank() {
-            // 实际部署时应该从服务器获取数据
-            // 暂时使用本地存储
-            const savedBank = localStorage.getItem('questionBank');
-            if (savedBank) {
-                questionBank = JSON.parse(savedBank);
-            } else {
-                // 初始化示例数据
-                questionBank = [
-                    {
-                        id: Date.now() + 1,
-                        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDAwMDAwMTAiLz4KPHBhdGggZD0iTTIwIDQwIEwxODAgNDAgTDE4MCAxNjAgTDIwIDE2MCIgZmlsbD0iIzMzMzMzMzIwIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuaYvue7meS4ieaWs+eJvueoi+WPiiDmg63pn7Plj5g8L3RleHQ+Cjwvc3ZnPg==',
-                        category: 'math',
-                        description: '二次函数图像分析题',
-                        uploadDate: new Date().toISOString(),
-                        uploader: '用户1'
-                    },
-                    {
-                        id: Date.now() + 2,
-                        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDAwMDAwMTAiLz4KPHBhdGggZD0iTTIwIDQwIEwxODAgNDAgTDE4MCAxNjAgTDIwIDE2MCIgZmlsbD0iIzMzMzMzMzIwIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuaYvue7meS4ieaWs+eJvueoi+WPiiDnmoTpgJnljYnlh7w8L3RleHQ+Cjwvc3ZnPg==',
-                        category: 'physics',
-                        description: '力学分析题',
-                        uploadDate: new Date().toISOString(),
-                        uploader: '用户2'
-                    }
-                ];
-                localStorage.setItem('questionBank', JSON.stringify(questionBank));
-            }
-            renderQuestionBank();
-        }
-
-        // 渲染题库
-        function renderQuestionBank() {
-            const grid = document.getElementById('questionBankGrid');
-            const emptyState = document.getElementById('emptyQuestionBank');
-            const searchTerm = document.getElementById('questionSearchInput').value.toLowerCase();
-            const category = document.getElementById('questionCategorySelect').value;
-            
-            const filteredQuestions = questionBank.filter(q => {
-                const matchesSearch = q.description.toLowerCase().includes(searchTerm);
-                const matchesCategory = category === 'all' || q.category === category;
-                return matchesSearch && matchesCategory;
+        function initAuthListener() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    startListening();
+                }
             });
-            
-            if (filteredQuestions.length === 0) {
+        }
+
+        function startListening() {
+            if (unsubscribe) unsubscribe();
+
+            const q = query(collection(db, 'questions'), orderBy('shareTime', 'desc'));
+            unsubscribe = onSnapshot(q, (snapshot) => {
+                allQuestions = [];
+                snapshot.forEach((doc) => {
+                    allQuestions.push({ id: doc.id, ...doc.data() });
+                });
+                renderQuestions();
+            }, (error) => {
+                console.error('Firestore listener error:', error);
+                showToast('数据加载失败: ' + error.message, 'error');
+            });
+        }
+
+        async function generateCover(data) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 250;
+            const ctx = canvas.getContext('2d');
+
+            const cat = CATEGORY_MAP[data.category] || CATEGORY_MAP.other;
+
+            if (data.type === 'image' && data.imageElement) {
+                const img = data.imageElement;
+                const imgRatio = img.width / img.height;
+                const canvasRatio = 400 / 250;
+                let sx, sy, sw, sh;
+                if (imgRatio > canvasRatio) {
+                    sh = img.height;
+                    sw = sh * canvasRatio;
+                    sx = (img.width - sw) / 2;
+                    sy = 0;
+                } else {
+                    sw = img.width;
+                    sh = sw / canvasRatio;
+                    sx = 0;
+                    sy = (img.height - sh) / 2;
+                }
+                ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 400, 250);
+                const overlay = ctx.createLinearGradient(0, 0, 0, 250);
+                overlay.addColorStop(0, 'rgba(0,0,0,0.1)');
+                overlay.addColorStop(0.6, 'rgba(0,0,0,0.3)');
+                overlay.addColorStop(1, 'rgba(0,0,0,0.7)');
+                ctx.fillStyle = overlay;
+                ctx.fillRect(0, 0, 400, 250);
+            } else {
+                const gradient = ctx.createLinearGradient(0, 0, 400, 250);
+                gradient.addColorStop(0, cat.gradient[0]);
+                gradient.addColorStop(1, cat.gradient[1]);
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 400, 250);
+
+                ctx.globalAlpha = 0.08;
+                ctx.fillStyle = '#fff';
+                for (let i = 0; i < 6; i++) {
+                    ctx.beginPath();
+                    ctx.arc(Math.random() * 400, Math.random() * 250, 30 + Math.random() * 60, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            roundRect(ctx, 14, 14, 68, 24, 12);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = '600 11px "Noto Sans SC", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(cat.name, 48, 26);
+
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+
+            if (data.type === 'text' && data.content) {
+                ctx.fillStyle = '#fff';
+                ctx.font = '500 15px "Noto Sans SC", sans-serif';
+                wrapText(ctx, data.content, 18, 56, 364, 22, 5);
+            } else if (data.description) {
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.font = '500 14px "Noto Sans SC", sans-serif';
+                wrapText(ctx, data.description, 18, 56, 364, 20, 3);
+            }
+
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillRect(18, 218, 364, 1);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.font = '12px "Noto Sans SC", sans-serif';
+            ctx.textBaseline = 'bottom';
+            const sharerText = `👤 ${data.sharerName || '匿名'}`;
+            ctx.fillText(sharerText, 18, 242);
+
+            if (data.shareTime) {
+                const dateStr = typeof data.shareTime === 'string'
+                    ? new Date(data.shareTime).toLocaleDateString('zh-CN')
+                    : new Date().toLocaleDateString('zh-CN');
+                ctx.textAlign = 'right';
+                ctx.fillText(dateStr, 382, 242);
+            }
+
+            return canvas.toDataURL('image/jpeg', 0.85);
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+            const lines = [];
+            let line = '';
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i];
+                if (ch === '\n') {
+                    lines.push(line);
+                    line = '';
+                    continue;
+                }
+                const testLine = line + ch;
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && line) {
+                    lines.push(line);
+                    line = ch;
+                } else {
+                    line = testLine;
+                }
+            }
+            if (line) lines.push(line);
+
+            const displayLines = lines.slice(0, maxLines);
+            if (lines.length > maxLines) {
+                displayLines[maxLines - 1] = displayLines[maxLines - 1].slice(0, -1) + '...';
+            }
+
+            for (let i = 0; i < displayLines.length; i++) {
+                ctx.fillText(displayLines[i], x, y + i * lineHeight);
+            }
+        }
+
+        function loadImageFromFile(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    URL.revokeObjectURL(img.src);
+                    resolve(img);
+                };
+                img.onerror = () => {
+                    URL.revokeObjectURL(img.src);
+                    reject(new Error('图片加载失败'));
+                };
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        async function compressImage(file, maxWidth = 1200, quality = 0.8) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    URL.revokeObjectURL(img.src);
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxWidth) {
+                        h = Math.round((maxWidth / w) * h);
+                        w = maxWidth;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
+                };
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        async function submitQuestion() {
+            const submitBtn = document.getElementById('uploadSubmitBtn');
+            const type = currentUploadType;
+            const category = document.getElementById('uploadCategory').value;
+            const sharerName = document.getElementById('sharerName').value.trim();
+            const description = document.getElementById('questionDesc').value.trim();
+
+            if (type === 'text') {
+                const content = document.getElementById('questionText').value.trim();
+                if (!content) { showToast('请输入题目内容', 'error'); return; }
+                if (!sharerName) { showToast('请填写分享人昵称', 'error'); return; }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = '生成封面...';
+
+                try {
+                    const coverDataUrl = await generateCover({
+                        type: 'text',
+                        category,
+                        content,
+                        description,
+                        sharerName,
+                        shareTime: new Date().toISOString()
+                    });
+
+                    submitBtn.textContent = '上传中...';
+
+                    await addDoc(collection(db, 'questions'), {
+                        type: 'text',
+                        category,
+                        content,
+                        description,
+                        sharerName,
+                        shareTime: serverTimestamp(),
+                        coverDataUrl
+                    });
+
+                    showToast('分享成功！', 'success');
+                    closeUploadModal();
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    showToast('分享失败: ' + error.message, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '分享到题库';
+                }
+            } else {
+                if (!selectedImageFile) { showToast('请上传题目图片', 'error'); return; }
+                if (!sharerName) { showToast('请填写分享人昵称', 'error'); return; }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = '处理图片...';
+
+                try {
+                    const imgElement = await loadImageFromFile(selectedImageFile);
+
+                    submitBtn.textContent = '生成封面...';
+
+                    const coverDataUrl = await generateCover({
+                        type: 'image',
+                        category,
+                        description,
+                        sharerName,
+                        shareTime: new Date().toISOString(),
+                        imageElement: imgElement
+                    });
+
+                    submitBtn.textContent = '上传图片...';
+
+                    const compressedBlob = await compressImage(selectedImageFile);
+                    const fileName = `questions/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
+                    const storageRef = ref(storage, fileName);
+                    await uploadBytes(storageRef, compressedBlob);
+                    const imageUrl = await getDownloadURL(storageRef);
+
+                    submitBtn.textContent = '保存数据...';
+
+                    await addDoc(collection(db, 'questions'), {
+                        type: 'image',
+                        category,
+                        description,
+                        sharerName,
+                        shareTime: serverTimestamp(),
+                        coverDataUrl,
+                        imageUrl
+                    });
+
+                    showToast('分享成功！', 'success');
+                    closeUploadModal();
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    showToast('分享失败: ' + error.message, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '分享到题库';
+                }
+            }
+        }
+
+        function renderQuestions() {
+            const grid = document.getElementById('questionGrid');
+            const emptyState = document.getElementById('emptyState');
+            const loadingState = document.getElementById('loadingState');
+            const countEl = document.getElementById('questionCount');
+
+            loadingState.style.display = 'none';
+
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+
+            const filtered = allQuestions.filter(q => {
+                const matchSearch = !searchTerm ||
+                    (q.description && q.description.toLowerCase().includes(searchTerm)) ||
+                    (q.content && q.content.toLowerCase().includes(searchTerm)) ||
+                    (q.sharerName && q.sharerName.toLowerCase().includes(searchTerm));
+                const matchCategory = categoryFilter === 'all' || q.category === categoryFilter;
+                return matchSearch && matchCategory;
+            });
+
+            countEl.textContent = `${filtered.length} 题`;
+
+            if (filtered.length === 0) {
                 grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
+                emptyState.style.display = 'block';
                 return;
             }
-            
-            emptyState.classList.add('hidden');
-            grid.innerHTML = filteredQuestions.map(question => `
-                <div class="question-card">
-                    <img src="${question.image}" alt="题目" class="question-card-image">
-                    <div class="question-card-body">
-                        <span class="question-card-category">${getCategoryName(question.category)}</span>
-                        <div class="question-card-description">${question.description}</div>
-                        <div class="question-card-meta">
-                            上传者: ${question.uploader} | ${formatDate(question.uploadDate)}
-                        </div>
-                        <div class="question-card-actions">
-                            <button class="question-card-btn view" onclick="viewQuestion(${question.id})">查看</button>
-                            <button class="question-card-btn download" onclick="downloadToMistakes(${question.id})">下载</button>
+
+            emptyState.style.display = 'none';
+            grid.innerHTML = filtered.map(q => {
+                const cat = CATEGORY_MAP[q.category] || CATEGORY_MAP.other;
+                const coverSrc = q.coverDataUrl || '';
+                const desc = q.description || (q.content ? q.content.slice(0, 60) + '...' : '无描述');
+                const timeStr = q.shareTime ? formatDate(q.shareTime) : '';
+                const typeLabel = q.type === 'image' ? '图片' : '文字';
+
+                return `
+                    <div class="q-card" onclick="window.viewDetail('${q.id}')">
+                        ${coverSrc ? `<img src="${coverSrc}" class="q-card-cover" alt="封面" loading="lazy">` : `<div class="q-card-cover" style="background:linear-gradient(135deg,${cat.gradient[0]},${cat.gradient[1]})"></div>`}
+                        <div class="q-card-body">
+                            <span class="q-card-badge ${q.category}">${cat.name}</span>
+                            <div class="q-card-desc">${escapeHtml(desc)}</div>
+                            <div class="q-card-meta">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                ${escapeHtml(q.sharerName || '匿名')}
+                                ${timeStr ? ` · ${timeStr}` : ''}
+                                <span class="q-card-type">${typeLabel}</span>
+                            </div>
                         </div>
                     </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(timestamp) {
+            let date;
+            if (timestamp && typeof timestamp.toDate === 'function') {
+                date = timestamp.toDate();
+            } else if (timestamp) {
+                date = new Date(timestamp);
+            } else {
+                return '';
+            }
+            return date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        }
+
+        window.viewDetail = function(id) {
+            const q = allQuestions.find(item => item.id === id);
+            if (!q) return;
+
+            const cat = CATEGORY_MAP[q.category] || CATEGORY_MAP.other;
+            const timeStr = q.shareTime ? formatDate(q.shareTime) : '未知';
+
+            let contentHtml = '';
+            if (q.type === 'image' && q.imageUrl) {
+                contentHtml = `<img src="${q.imageUrl}" class="detail-image" onclick="window.zoomImage('${q.imageUrl}')" alt="题目图片">`;
+            } else if (q.type === 'text' && q.content) {
+                contentHtml = `<div class="detail-text">${escapeHtml(q.content)}</div>`;
+            }
+
+            const body = document.getElementById('detailBody');
+            body.innerHTML = `
+                ${q.coverDataUrl ? `<img src="${q.coverDataUrl}" class="detail-cover" alt="封面">` : ''}
+                ${contentHtml}
+                <div class="detail-info">
+                    <span class="q-card-badge ${q.category}" style="margin:0">${cat.name}</span>
+                    <span class="detail-info-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        ${escapeHtml(q.sharerName || '匿名')}
+                    </span>
+                    <span class="detail-info-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        ${timeStr}
+                    </span>
+                    <span class="detail-info-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${q.type === 'image' ? '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>' : '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'}</svg>
+                        ${q.type === 'image' ? '图片题' : '文字题'}
+                    </span>
                 </div>
-            `).join('');
-        }
+                ${q.description ? `<p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">${escapeHtml(q.description)}</p>` : ''}
+                <div class="detail-actions">
+                    <button class="detail-btn download" onclick="window.downloadToNotebook('${q.id}')">📥 收录到错题本</button>
+                </div>
+            `;
 
-        // 获取分类名称
-        function getCategoryName(category) {
-            const categories = {
-                math: '数学',
-                physics: '物理',
-                chemistry: '化学',
-                biology: '生物',
-                english: '英语',
-                other: '其他'
+            document.getElementById('detailModal').classList.add('active');
+        };
+
+        window.zoomImage = function(url) {
+            const viewer = document.createElement('div');
+            viewer.className = 'image-viewer';
+            viewer.onclick = () => document.body.removeChild(viewer);
+            const img = document.createElement('img');
+            img.src = url;
+            viewer.appendChild(img);
+            document.body.appendChild(viewer);
+        };
+
+        window.downloadToNotebook = function(id) {
+            const q = allQuestions.find(item => item.id === id);
+            if (!q) return;
+
+            const mistake = {
+                id: Date.now(),
+                image: q.imageUrl || q.coverDataUrl || '',
+                answer: q.content || q.description || '',
+                date: new Date().toLocaleString('zh-CN'),
+                timestamp: Date.now()
             };
-            return categories[category] || '其他';
+
+            let notebook = JSON.parse(localStorage.getItem('notebook') || '[]');
+            notebook.unshift(mistake);
+            localStorage.setItem('notebook', JSON.stringify(notebook));
+            showToast('已收录到错题本！', 'success');
+        };
+
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+            const savedName = localStorage.getItem('sharerName') || '';
+            document.getElementById('sharerName').value = savedName;
         }
 
-        // 格式化日期
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            });
-        }
-
-        // 查看题目
-        function viewQuestion(id) {
-            const question = questionBank.find(q => q.id === id);
-            if (question) {
-                const img = new Image();
-                img.src = question.image;
-                img.style.maxWidth = '80%';
-                img.style.maxHeight = '80%';
-                
-                const viewer = document.createElement('div');
-                viewer.style.position = 'fixed';
-                viewer.style.top = '0';
-                viewer.style.left = '0';
-                viewer.style.width = '100%';
-                viewer.style.height = '100%';
-                viewer.style.background = 'rgba(0,0,0,0.9)';
-                viewer.style.display = 'flex';
-                viewer.style.alignItems = 'center';
-                viewer.style.justifyContent = 'center';
-                viewer.style.zIndex = '1000';
-                viewer.onclick = () => document.body.removeChild(viewer);
-                
-                viewer.appendChild(img);
-                document.body.appendChild(viewer);
-            }
-        }
-
-        // 下载题目到错题本
-        function downloadToMistakes(id) {
-            const question = questionBank.find(q => q.id === id);
-            if (question) {
-                const mistake = {
-                    id: Date.now(),
-                    image: question.image,
-                    category: question.category,
-                    description: question.description,
-                    date: new Date().toISOString()
-                };
-                
-                let mistakes = JSON.parse(localStorage.getItem('mistakes') || '[]');
-                mistakes.push(mistake);
-                localStorage.setItem('mistakes', JSON.stringify(mistakes));
-                showToast('已添加到错题本');
-            }
-        }
-
-        // 显示上传题目模态框
-        function showUploadModal() {
-            document.getElementById('uploadQuestionModal').classList.add('active');
-        }
-
-        // 隐藏上传题目模态框
-        function hideUploadModal() {
-            document.getElementById('uploadQuestionModal').classList.remove('active');
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
             resetUploadForm();
         }
 
-        // 重置上传表单
         function resetUploadForm() {
-            document.getElementById('questionImageInput').value = '';
-            document.getElementById('uploadPreview').src = '';
-            document.getElementById('uploadPreview').classList.add('hidden');
-            document.getElementById('uploadCategorySelect').value = 'math';
-            document.getElementById('questionDescription').value = '';
+            document.getElementById('questionText').value = '';
+            document.getElementById('questionDesc').value = '';
+            document.getElementById('uploadCategory').value = 'math';
+            selectedImageFile = null;
+            document.getElementById('imageFileInput').value = '';
+            document.getElementById('uploadPlaceholder').style.display = '';
+            document.getElementById('previewWrap').style.display = 'none';
+            document.getElementById('imagePreview').src = '';
+            switchUploadType('text');
         }
 
-        // 处理图片上传
-        function handleQuestionImageUpload(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('uploadPreview');
-                    preview.src = e.target.result;
-                    preview.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
+        function switchUploadType(type) {
+            currentUploadType = type;
+            document.getElementById('typeTextBtn').classList.toggle('active', type === 'text');
+            document.getElementById('typeImageBtn').classList.toggle('active', type === 'image');
+            document.getElementById('textInputSection').style.display = type === 'text' ? '' : 'none';
+            document.getElementById('imageInputSection').style.display = type === 'image' ? '' : 'none';
         }
 
-        // 上传题目
-        function uploadQuestion() {
-            const imageInput = document.getElementById('questionImageInput');
-            const category = document.getElementById('uploadCategorySelect').value;
-            const description = document.getElementById('questionDescription').value.trim();
-            
-            if (!imageInput.files[0]) {
-                showToast('请上传题目图片');
-                return;
-            }
-            
-            if (!description) {
-                showToast('请输入题目描述');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const newQuestion = {
-                    id: Date.now(),
-                    image: e.target.result,
-                    category: category,
-                    description: description,
-                    uploadDate: new Date().toISOString(),
-                    uploader: '当前用户' // 实际部署时应该从登录信息获取
-                };
-                
-                questionBank.push(newQuestion);
-                localStorage.setItem('questionBank', JSON.stringify(questionBank));
-                showToast('上传成功！');
-                hideUploadModal();
-                loadQuestionBank();
-            };
-            reader.readAsDataURL(imageInput.files[0]);
-        }
-
-        // 显示提示信息
-        function showToast(message) {
+        function showToast(message, type = '') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            toast.className = 'toast show' + (type ? ' ' + type : '');
+            setTimeout(() => { toast.className = 'toast'; }, 3000);
         }
 
-        // 绑定事件
+        function showSetupPanel() {
+            document.getElementById('setupPanel').classList.remove('hidden');
+            document.getElementById('mainApp').style.display = 'none';
+        }
+
+        function showMainApp() {
+            document.getElementById('setupPanel').classList.add('hidden');
+            document.getElementById('mainApp').style.display = '';
+            document.getElementById('loadingState').style.display = 'block';
+        }
+
+        async function tryAutoConnect() {
+            const savedConfig = localStorage.getItem('firebaseConfig');
+            if (!savedConfig) {
+                showSetupPanel();
+                return;
+            }
+
+            try {
+                const config = JSON.parse(savedConfig);
+                await connectFirebase(config);
+                initAuthListener();
+                showMainApp();
+            } catch (error) {
+                console.error('Auto-connect failed:', error);
+                localStorage.removeItem('firebaseConfig');
+                showSetupPanel();
+            }
+        }
+
         function bindEvents() {
-            // 激活相关事件
-            document.getElementById('activateBtn').addEventListener('click', activateQuestionBank);
-            document.getElementById('generateCodeBtn').addEventListener('click', generateTestCode);
-            
-            // 上传相关事件
-            document.getElementById('uploadQuestionBtn').addEventListener('click', showUploadModal);
-            document.getElementById('closeUploadModal').addEventListener('click', hideUploadModal);
-            document.getElementById('cancelUploadBtn').addEventListener('click', hideUploadModal);
-            document.getElementById('submitUploadBtn').addEventListener('click', uploadQuestion);
-            document.getElementById('questionImageInput').addEventListener('change', handleQuestionImageUpload);
-            
-            // 搜索和分类事件
-            document.getElementById('questionSearchInput').addEventListener('input', renderQuestionBank);
-            document.getElementById('questionCategorySelect').addEventListener('change', renderQuestionBank);
-            document.getElementById('questionSearchBtn').addEventListener('click', renderQuestionBank);
+            document.getElementById('setupConnectBtn').addEventListener('click', async () => {
+                const status = document.getElementById('setupStatus');
+                const input = document.getElementById('firebaseConfigInput');
+                const btn = document.getElementById('setupConnectBtn');
+
+                try {
+                    status.textContent = '';
+                    status.className = 'setup-status';
+                    btn.disabled = true;
+                    btn.textContent = '连接中...';
+
+                    const config = parseFirebaseConfig(input.value.trim());
+                    await connectFirebase(config);
+                    initAuthListener();
+                    showMainApp();
+
+                    status.textContent = '✅ 连接成功！';
+                    status.className = 'setup-status success';
+                    setTimeout(() => { showMainApp(); }, 500);
+                } catch (error) {
+                    status.textContent = '❌ ' + error.message;
+                    status.className = 'setup-status error';
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '连接 Firebase';
+                }
+            });
+
+            document.getElementById('setupSkipBtn').addEventListener('click', () => {
+                document.getElementById('setupPanel').classList.add('hidden');
+                document.getElementById('mainApp').style.display = '';
+                showToast('未配置 Firebase，题库功能不可用', 'error');
+            });
+
+            document.getElementById('settingsBtn').addEventListener('click', () => {
+                showSetupPanel();
+                const savedConfig = localStorage.getItem('firebaseConfig');
+                if (savedConfig) {
+                    document.getElementById('firebaseConfigInput').value = JSON.stringify(JSON.parse(savedConfig), null, 2);
+                }
+            });
+
+            document.getElementById('uploadBtn').addEventListener('click', () => {
+                if (!db) { showToast('请先配置 Firebase', 'error'); return; }
+                openUploadModal();
+            });
+
+            document.getElementById('uploadCloseBtn').addEventListener('click', closeUploadModal);
+            document.getElementById('uploadCancelBtn').addEventListener('click', closeUploadModal);
+            document.getElementById('uploadSubmitBtn').addEventListener('click', submitQuestion);
+
+            document.getElementById('typeTextBtn').addEventListener('click', () => switchUploadType('text'));
+            document.getElementById('typeImageBtn').addEventListener('click', () => switchUploadType('image'));
+
+            document.getElementById('imageFileInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('图片不能超过 5MB', 'error');
+                    return;
+                }
+                selectedImageFile = file;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    document.getElementById('imagePreview').src = ev.target.result;
+                    document.getElementById('uploadPlaceholder').style.display = 'none';
+                    document.getElementById('previewWrap').style.display = '';
+                };
+                reader.readAsDataURL(file);
+            });
+
+            document.getElementById('removeImageBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectedImageFile = null;
+                document.getElementById('imageFileInput').value = '';
+                document.getElementById('uploadPlaceholder').style.display = '';
+                document.getElementById('previewWrap').style.display = 'none';
+                document.getElementById('imagePreview').src = '';
+            });
+
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', () => { uploadArea.classList.remove('dragover'); });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const input = document.getElementById('imageFileInput');
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    input.files = dt.files;
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+
+            document.getElementById('detailCloseBtn').addEventListener('click', () => {
+                document.getElementById('detailModal').classList.remove('active');
+            });
+
+            document.getElementById('searchInput').addEventListener('input', renderQuestions);
+            document.getElementById('categoryFilter').addEventListener('change', renderQuestions);
+
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) overlay.classList.remove('active');
+                });
+            });
+
+            document.getElementById('sharerName').addEventListener('change', (e) => {
+                localStorage.setItem('sharerName', e.target.value.trim());
+            });
         }
 
-        // 初始化应用
         function init() {
             bindEvents();
-            showQuestionBank();
+            tryAutoConnect();
         }
 
-        // 页面加载完成后初始化
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
