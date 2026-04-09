@@ -3070,9 +3070,9 @@
                                 </div>
                                 <div class="calculator-row">
                                     <button class="calculator-btn clear" data-value="C">C</button>
+                                    <button class="calculator-btn" data-value="⌫">⌫</button>
                                     <button class="calculator-btn" data-value="(">(</button>
                                     <button class="calculator-btn" data-value=")">)</button>
-                                    <button class="calculator-btn" data-value="%">%</button>
                                 </div>
                             </div>
                         </div>
@@ -5043,11 +5043,10 @@
                 clearCalculator();
                 return;
             }
-            if (value === 'π') {
-                value = Math.PI;
-            }
-            if (value === 'e') {
-                value = Math.E;
+            if (value === '⌫') {
+                calculatorInput = calculatorInput.slice(0, -1);
+                document.getElementById('calculatorInput').value = calculatorInput;
+                return;
             }
             if (value === 'sin' || value === 'cos' || value === 'tan' || 
                 value === 'asin' || value === 'acos' || value === 'atan' || 
@@ -5092,7 +5091,7 @@
                 expression = expression.replace(/atan\(/g, 'Math.atan(');
                 expression = expression.replace(/sqrt\(/g, 'Math.sqrt(');
                 expression = expression.replace(/π/g, 'Math.PI');
-                expression = expression.replace(/e/g, 'Math.E');
+                expression = expression.replace(/\be\b/g, 'Math.E');
                 const result = eval(expression);
                 document.getElementById('calculatorOutput').textContent = '结果: ' + result;
             } catch (error) {
