@@ -183,6 +183,73 @@
         .btn:hover:not(:disabled) { transform: translateY(-1px); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 12px 16px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-label {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .toggle-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 2px;
+            top: 2px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--accent-green);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(20px);
+            background: var(--accent-green);
+        }
+
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -445,6 +512,17 @@
         </div>
     </div>
 
+    <div class="toggle-row">
+        <div>
+            <div class="toggle-label">🔓 自动免审核模式</div>
+            <div class="toggle-desc">开启后，用户上传的题目将自动通过审核，无需手动操作</div>
+        </div>
+        <label class="toggle-switch">
+            <input type="checkbox" id="autoApproveToggle">
+            <span class="toggle-slider"></span>
+        </label>
+    </div>
+
     <div class="stats-bar" id="statsBar"></div>
 
     <div class="filter-bar">
@@ -493,7 +571,7 @@
 
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, getDoc, setDoc, deleteDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
     import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
     const FIREBASE_CONFIG = {
@@ -511,6 +589,7 @@
     let auth = null;
     let allQuestions = [];
     let unsubscribe = null;
+    let autoApproveEnabled = false;
 
     const CATEGORY_MAP = {
         math: { name: '数学', color: '#3b82f6' },
@@ -593,9 +672,34 @@
     async function initApp() {
         try {
             await connectFirebase();
+            await loadAutoApproveSetting();
             startListening();
         } catch (error) {
             showToast('连接失败: ' + error.message, 'error');
+        }
+    }
+
+    async function loadAutoApproveSetting() {
+        try {
+            const settingsRef = doc(db, 'settings', 'appConfig');
+            const settingsSnap = await getDoc(settingsRef);
+            if (settingsSnap.exists()) {
+                autoApproveEnabled = settingsSnap.data().autoApprove === true;
+            }
+            document.getElementById('autoApproveToggle').checked = autoApproveEnabled;
+        } catch (error) {
+            console.error('Failed to load settings:', error);
+        }
+    }
+
+    async function saveAutoApproveSetting(enabled) {
+        try {
+            const settingsRef = doc(db, 'settings', 'appConfig');
+            await setDoc(settingsRef, { autoApprove: enabled }, { merge: true });
+            showToast(enabled ? '已开启自动免审核模式' : '已关闭自动免审核', 'success');
+        } catch (error) {
+            console.error('Failed to save settings:', error);
+            showToast('保存设置失败', 'error');
         }
     }
 
@@ -781,6 +885,10 @@
         document.getElementById('categoryFilter').addEventListener('change', renderQuestions);
         document.getElementById('closeDetailModal').addEventListener('click', () => {
             document.getElementById('detailModal').classList.remove('active');
+        });
+        document.getElementById('autoApproveToggle').addEventListener('change', (e) => {
+            autoApproveEnabled = e.target.checked;
+            saveAutoApproveSetting(autoApproveEnabled);
         });
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', (e) => {

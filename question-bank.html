@@ -909,6 +909,7 @@
         let unsubscribe = null;
         let currentUploadType = 'text';
         let selectedImageFile = null;
+        let autoApproveEnabled = false;
 
         const CATEGORY_MAP = {
             math: { name: '数学', color: '#3b82f6', gradient: ['#3b82f6', '#1d4ed8'] },
@@ -1161,7 +1162,7 @@
                         sharerName,
                         shareTime: serverTimestamp(),
                         coverDataUrl,
-                        approved: false
+                        approved: autoApproveEnabled
                     });
 
                     showToast('分享成功！', 'success');
@@ -1211,7 +1212,7 @@
                         shareTime: serverTimestamp(),
                         coverDataUrl,
                         imageBase64,
-                        approved: false
+                        approved: autoApproveEnabled
                     });
 
                     showToast('分享成功！', 'success');
@@ -1420,10 +1421,23 @@
             document.getElementById('loadingState').style.display = 'block';
         }
 
+        async function loadAutoApproveSetting() {
+            try {
+                const settingsRef = doc(db, 'settings', 'appConfig');
+                const settingsSnap = await getDoc(settingsRef);
+                if (settingsSnap.exists()) {
+                    autoApproveEnabled = settingsSnap.data().autoApprove === true;
+                }
+            } catch (error) {
+                console.error('Failed to load auto approve setting:', error);
+            }
+        }
+
         async function initApp() {
             try {
                 await connectFirebase();
                 initAuthListener();
+                await loadAutoApproveSetting();
                 showMainApp();
             } catch (error) {
                 console.error('Firebase connection failed:', error);
