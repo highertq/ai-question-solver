@@ -749,6 +749,8 @@
 }'></textarea>
             <div class="setup-hint">
                 📌 获取方式：打开 <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent-blue)">Firebase 控制台</a> → 项目设置 → 您的应用 → SDK 安装配置 → 复制 <code>firebaseConfig</code> 对象内容
+                <br><br>
+                💡 只需创建项目 + 启用 Firestore 数据库 + 启用匿名登录，无需开启 Storage！图片会以 Base64 格式直接存储在 Firestore 中。
             </div>
             <div class="setup-actions">
                 <button class="setup-btn primary" id="setupConnectBtn">连接 Firebase</button>
@@ -905,13 +907,11 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
-        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js';
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
         import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
         let app = null;
         let db = null;
-        let storage = null;
         let auth = null;
         let currentUser = null;
         let allQuestions = [];
@@ -950,7 +950,6 @@
                 }
                 app = initializeApp(config);
                 db = getFirestore(app);
-                storage = getStorage(app);
                 auth = getAuth(app);
 
                 await signInAnonymously(auth);
@@ -1138,25 +1137,12 @@
             });
         }
 
-        async function compressImage(file, maxWidth = 1200, quality = 0.8) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    URL.revokeObjectURL(img.src);
-                    let w = img.width;
-                    let h = img.height;
-                    if (w > maxWidth) {
-                        h = Math.round((maxWidth / w) * h);
-                        w = maxWidth;
-                    }
-                    const canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
-                    canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
-                };
-                img.src = URL.createObjectURL(file);
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => reject(new Error('读取文件失败'));
+                reader.readAsDataURL(file);
             });
         }
 
@@ -1210,6 +1196,11 @@
                 if (!selectedImageFile) { showToast('请上传题目图片', 'error'); return; }
                 if (!sharerName) { showToast('请填写分享人昵称', 'error'); return; }
 
+                if (selectedImageFile.size > 900 * 1024) {
+                    showToast('图片不能超过 900KB', 'error');
+                    return;
+                }
+
                 submitBtn.disabled = true;
                 submitBtn.textContent = '处理图片...';
 
@@ -1227,15 +1218,9 @@
                         imageElement: imgElement
                     });
 
-                    submitBtn.textContent = '上传图片...';
+                    submitBtn.textContent = '保存中...';
 
-                    const compressedBlob = await compressImage(selectedImageFile);
-                    const fileName = `questions/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
-                    const storageRef = ref(storage, fileName);
-                    await uploadBytes(storageRef, compressedBlob);
-                    const imageUrl = await getDownloadURL(storageRef);
-
-                    submitBtn.textContent = '保存数据...';
+                    const imageBase64 = await readFileAsBase64(selectedImageFile);
 
                     await addDoc(collection(db, 'questions'), {
                         type: 'image',
@@ -1244,7 +1229,7 @@
                         sharerName,
                         shareTime: serverTimestamp(),
                         coverDataUrl,
-                        imageUrl
+                        imageBase64
                     });
 
                     showToast('分享成功！', 'success');
@@ -1339,8 +1324,8 @@
             const timeStr = q.shareTime ? formatDate(q.shareTime) : '未知';
 
             let contentHtml = '';
-            if (q.type === 'image' && q.imageUrl) {
-                contentHtml = `<img src="${q.imageUrl}" class="detail-image" onclick="window.zoomImage('${q.imageUrl}')" alt="题目图片">`;
+            if (q.type === 'image' && q.imageBase64) {
+                contentHtml = `<img src="${q.imageBase64}" class="detail-image" onclick="window.zoomImage('${q.id}')" alt="题目图片">`;
             } else if (q.type === 'text' && q.content) {
                 contentHtml = `<div class="detail-text">${escapeHtml(q.content)}</div>`;
             }
@@ -1373,7 +1358,16 @@
             document.getElementById('detailModal').classList.add('active');
         };
 
-        window.zoomImage = function(url) {
+        window.zoomImage = function(idOrUrl) {
+            let url;
+            if (idOrUrl && idOrUrl.length < 50) {
+                const q = allQuestions.find(item => item.id === idOrUrl);
+                if (!q) return;
+                url = q.imageBase64 || q.coverDataUrl;
+            } else {
+                url = idOrUrl;
+            }
+
             const viewer = document.createElement('div');
             viewer.className = 'image-viewer';
             viewer.onclick = () => document.body.removeChild(viewer);
@@ -1389,7 +1383,7 @@
 
             const mistake = {
                 id: Date.now(),
-                image: q.imageUrl || q.coverDataUrl || '',
+                image: q.imageBase64 || q.coverDataUrl || '',
                 answer: q.content || q.description || '',
                 date: new Date().toLocaleString('zh-CN'),
                 timestamp: Date.now()
