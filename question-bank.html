@@ -750,9 +750,6 @@
                 <span class="question-count" id="questionCount">0 题</span>
             </div>
             <div class="toolbar-actions">
-                <button class="action-btn ghost" id="reviewToggleBtn">
-                    🔓 免审核
-                </button>
                 <button class="action-btn primary" id="uploadBtn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     分享题目
@@ -912,7 +909,6 @@
         let unsubscribe = null;
         let currentUploadType = 'text';
         let selectedImageFile = null;
-        let reviewEnabled = localStorage.getItem('reviewEnabled') === 'true';
 
         const CATEGORY_MAP = {
             math: { name: '数学', color: '#3b82f6', gradient: ['#3b82f6', '#1d4ed8'] },
@@ -961,7 +957,7 @@
                 allQuestions = [];
                 snapshot.forEach((d) => {
                     const data = { id: d.id, ...d.data() };
-                    if (reviewEnabled && data.approved === false) return;
+                    if (data.approved === false) return;
                     allQuestions.push(data);
                 });
                 renderQuestions();
@@ -1165,7 +1161,7 @@
                         sharerName,
                         shareTime: serverTimestamp(),
                         coverDataUrl,
-                        approved: !reviewEnabled
+                        approved: false
                     });
 
                     showToast('分享成功！', 'success');
@@ -1215,7 +1211,7 @@
                         shareTime: serverTimestamp(),
                         coverDataUrl,
                         imageBase64,
-                        approved: !reviewEnabled
+                        approved: false
                     });
 
                     showToast('分享成功！', 'success');
@@ -1338,8 +1334,6 @@
                 ${q.description ? `<p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">${escapeHtml(q.description)}</p>` : ''}
                 <div class="detail-actions">
                     <button class="detail-btn download" onclick="window.downloadToNotebook('${q.id}')">📥 收录到错题本</button>
-                    ${q.approved === false ? `<button class="detail-btn" style="background:rgba(16,185,129,0.1);color:var(--accent-green)" onclick="window.approveQuestion('${q.id}')">✅ 通过审核</button>` : ''}
-                    <button class="detail-btn" style="background:rgba(239,68,68,0.1);color:var(--accent-red)" onclick="window.deleteQuestion('${q.id}')">🗑 删除</button>
                 </div>
             `;
 
@@ -1424,8 +1418,6 @@
         function showMainApp() {
             document.getElementById('mainApp').style.display = '';
             document.getElementById('loadingState').style.display = 'block';
-            const btn = document.getElementById('reviewToggleBtn');
-            if (btn) btn.textContent = reviewEnabled ? '🔒 审核中' : '🔓 免审核';
         }
 
         async function initApp() {
@@ -1443,15 +1435,6 @@
             document.getElementById('uploadBtn').addEventListener('click', () => {
                 if (!db) { showToast('请等待 Firebase 连接', 'error'); return; }
                 openUploadModal();
-            });
-
-            document.getElementById('reviewToggleBtn').addEventListener('click', () => {
-                reviewEnabled = !reviewEnabled;
-                localStorage.setItem('reviewEnabled', reviewEnabled);
-                const btn = document.getElementById('reviewToggleBtn');
-                btn.textContent = reviewEnabled ? '🔒 审核中' : '🔓 免审核';
-                startListening();
-                showToast(reviewEnabled ? '已开启审核模式' : '已关闭审核，所有题目直接展示');
             });
 
             document.getElementById('uploadCloseBtn').addEventListener('click', closeUploadModal);
