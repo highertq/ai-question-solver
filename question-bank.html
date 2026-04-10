@@ -307,6 +307,10 @@
         .q-card-badge.chemistry { background: rgba(16,185,129,0.15); color: var(--accent-green); }
         .q-card-badge.biology { background: rgba(6,182,212,0.15); color: var(--accent-cyan); }
         .q-card-badge.english { background: rgba(249,115,22,0.15); color: var(--accent-orange); }
+        .q-card-badge.chinese { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+        .q-card-badge.history { background: rgba(245,158,11,0.15); color: #f59e0b; }
+        .q-card-badge.politics { background: rgba(132,204,22,0.15); color: #84cc16; }
+        .q-card-badge.society { background: rgba(20,184,166,0.15); color: #14b8a6; }
         .q-card-badge.other { background: rgba(236,72,153,0.15); color: var(--accent-pink); }
 
         .q-card-desc {
@@ -734,33 +738,7 @@
     </style>
 </head>
 <body>
-    <div class="setup-panel" id="setupPanel">
-        <div class="setup-content">
-            <h2>🔥 配置 Firebase</h2>
-            <p>首次使用需要配置 Firebase 以启用云端题库功能（完全免费）</p>
-            <textarea class="setup-textarea" id="firebaseConfigInput" placeholder='粘贴 Firebase 配置，格式如：
-{
-  apiKey: "AIza...",
-  authDomain: "xxx.firebaseapp.com",
-  projectId: "xxx",
-  storageBucket: "xxx.appspot.com",
-  messagingSenderId: "123",
-  appId: "1:123:web:abc"
-}'></textarea>
-            <div class="setup-hint">
-                📌 获取方式：打开 <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent-blue)">Firebase 控制台</a> → 项目设置 → 您的应用 → SDK 安装配置 → 复制 <code>firebaseConfig</code> 对象内容
-                <br><br>
-                💡 只需创建项目 + 启用 Firestore 数据库 + 启用匿名登录，无需开启 Storage！图片会以 Base64 格式直接存储在 Firestore 中。
-            </div>
-            <div class="setup-actions">
-                <button class="setup-btn primary" id="setupConnectBtn">连接 Firebase</button>
-                <button class="setup-btn secondary" id="setupSkipBtn">暂不配置</button>
-            </div>
-            <div class="setup-status" id="setupStatus"></div>
-        </div>
-    </div>
-
-    <div class="container" id="mainApp" style="display:none">
+    <div class="container" id="mainApp">
         <div class="header">
             <h1>📚 识题王 - 线上题库</h1>
             <p>汇聚优质题目，共享学习资源</p>
@@ -772,10 +750,6 @@
                 <span class="question-count" id="questionCount">0 题</span>
             </div>
             <div class="toolbar-actions">
-                <button class="action-btn ghost" id="settingsBtn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                    设置
-                </button>
                 <button class="action-btn primary" id="uploadBtn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     分享题目
@@ -789,14 +763,18 @@
                 <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </div>
             <select id="categoryFilter" class="category-select">
-                <option value="all">全部分类</option>
-                <option value="math">数学</option>
-                <option value="physics">物理</option>
-                <option value="chemistry">化学</option>
-                <option value="biology">生物</option>
-                <option value="english">英语</option>
-                <option value="other">其他</option>
-            </select>
+                    <option value="all">全部分类</option>
+                    <option value="math">数学</option>
+                    <option value="physics">物理</option>
+                    <option value="chemistry">化学</option>
+                    <option value="biology">生物</option>
+                    <option value="english">英语</option>
+                    <option value="chinese">语文</option>
+                    <option value="history">历史</option>
+                    <option value="politics">道法</option>
+                    <option value="society">社会</option>
+                    <option value="other">其他</option>
+                </select>
         </div>
 
         <div id="loadingState" class="loading-state" style="display:none">
@@ -872,6 +850,10 @@
                             <option value="chemistry">化学</option>
                             <option value="biology">生物</option>
                             <option value="english">英语</option>
+                            <option value="chinese">语文</option>
+                            <option value="history">历史</option>
+                            <option value="politics">道法</option>
+                            <option value="society">社会</option>
                             <option value="other">其他</option>
                         </select>
                     </div>
@@ -910,6 +892,15 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
         import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
+        const FIREBASE_CONFIG = {
+            apiKey: "AIzaSyD_5k9SWEMefoW1-VP6pkYnFkFWMNITmms",
+            authDomain: "question-bank-a2412.firebaseapp.com",
+            projectId: "question-bank-a2412",
+            storageBucket: "question-bank-a2412.firebasestorage.app",
+            messagingSenderId: "401437244306",
+            appId: "1:401437244306:web:1d2c0835302853149fdf4b"
+        };
+
         let app = null;
         let db = null;
         let auth = null;
@@ -925,36 +916,23 @@
             chemistry: { name: '化学', color: '#10b981', gradient: ['#10b981', '#059669'] },
             biology: { name: '生物', color: '#06b6d4', gradient: ['#06b6d4', '#0891b2'] },
             english: { name: '英语', color: '#f97316', gradient: ['#f97316', '#ea580c'] },
+            chinese: { name: '语文', color: '#ef4444', gradient: ['#ef4444', '#dc2626'] },
+            history: { name: '历史', color: '#f59e0b', gradient: ['#f59e0b', '#d97706'] },
+            politics: { name: '道法', color: '#84cc16', gradient: ['#84cc16', '#65a30d'] },
+            society: { name: '社会', color: '#14b8a6', gradient: ['#14b8a6', '#0d9488'] },
             other: { name: '其他', color: '#ec4899', gradient: ['#ec4899', '#db2777'] }
         };
 
-        function parseFirebaseConfig(text) {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                try {
-                    const fn = new Function('return ' + text);
-                    const config = fn();
-                    if (config && config.apiKey && config.projectId) return config;
-                    throw new Error('缺少必要字段');
-                } catch (e2) {
-                    throw new Error('配置格式错误，请检查后重试');
-                }
-            }
-        }
-
-        async function connectFirebase(config) {
+        async function connectFirebase() {
             try {
                 if (app) {
                     try { app.delete(); } catch(e) {}
                 }
-                app = initializeApp(config);
+                app = initializeApp(FIREBASE_CONFIG);
                 db = getFirestore(app);
                 auth = getAuth(app);
 
                 await signInAnonymously(auth);
-
-                localStorage.setItem('firebaseConfig', JSON.stringify(config));
                 return true;
             } catch (error) {
                 console.error('Firebase connection error:', error);
@@ -1433,81 +1411,25 @@
             setTimeout(() => { toast.className = 'toast'; }, 3000);
         }
 
-        function showSetupPanel() {
-            document.getElementById('setupPanel').classList.remove('hidden');
-            document.getElementById('mainApp').style.display = 'none';
-        }
-
         function showMainApp() {
-            document.getElementById('setupPanel').classList.add('hidden');
             document.getElementById('mainApp').style.display = '';
             document.getElementById('loadingState').style.display = 'block';
         }
 
-        async function tryAutoConnect() {
-            const savedConfig = localStorage.getItem('firebaseConfig');
-            if (!savedConfig) {
-                showSetupPanel();
-                return;
-            }
-
+        async function initApp() {
             try {
-                const config = JSON.parse(savedConfig);
-                await connectFirebase(config);
+                await connectFirebase();
                 initAuthListener();
                 showMainApp();
             } catch (error) {
-                console.error('Auto-connect failed:', error);
-                localStorage.removeItem('firebaseConfig');
-                showSetupPanel();
+                console.error('Firebase connection failed:', error);
+                showToast('连接 Firebase 失败: ' + error.message, 'error');
             }
         }
 
         function bindEvents() {
-            document.getElementById('setupConnectBtn').addEventListener('click', async () => {
-                const status = document.getElementById('setupStatus');
-                const input = document.getElementById('firebaseConfigInput');
-                const btn = document.getElementById('setupConnectBtn');
-
-                try {
-                    status.textContent = '';
-                    status.className = 'setup-status';
-                    btn.disabled = true;
-                    btn.textContent = '连接中...';
-
-                    const config = parseFirebaseConfig(input.value.trim());
-                    await connectFirebase(config);
-                    initAuthListener();
-                    showMainApp();
-
-                    status.textContent = '✅ 连接成功！';
-                    status.className = 'setup-status success';
-                    setTimeout(() => { showMainApp(); }, 500);
-                } catch (error) {
-                    status.textContent = '❌ ' + error.message;
-                    status.className = 'setup-status error';
-                } finally {
-                    btn.disabled = false;
-                    btn.textContent = '连接 Firebase';
-                }
-            });
-
-            document.getElementById('setupSkipBtn').addEventListener('click', () => {
-                document.getElementById('setupPanel').classList.add('hidden');
-                document.getElementById('mainApp').style.display = '';
-                showToast('未配置 Firebase，题库功能不可用', 'error');
-            });
-
-            document.getElementById('settingsBtn').addEventListener('click', () => {
-                showSetupPanel();
-                const savedConfig = localStorage.getItem('firebaseConfig');
-                if (savedConfig) {
-                    document.getElementById('firebaseConfigInput').value = JSON.stringify(JSON.parse(savedConfig), null, 2);
-                }
-            });
-
             document.getElementById('uploadBtn').addEventListener('click', () => {
-                if (!db) { showToast('请先配置 Firebase', 'error'); return; }
+                if (!db) { showToast('请等待 Firebase 连接', 'error'); return; }
                 openUploadModal();
             });
 
@@ -1580,7 +1502,7 @@
 
         function init() {
             bindEvents();
-            tryAutoConnect();
+            initApp();
         }
 
         window.addEventListener('DOMContentLoaded', init);
