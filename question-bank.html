@@ -750,6 +750,9 @@
                 <span class="question-count" id="questionCount">0 题</span>
             </div>
             <div class="toolbar-actions">
+                <button class="action-btn ghost" id="reviewToggleBtn">
+                    🔓 免审核
+                </button>
                 <button class="action-btn primary" id="uploadBtn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     分享题目
@@ -889,7 +892,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, deleteDoc, updateDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
         import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
         const FIREBASE_CONFIG = {
@@ -909,6 +912,7 @@
         let unsubscribe = null;
         let currentUploadType = 'text';
         let selectedImageFile = null;
+        let reviewEnabled = localStorage.getItem('reviewEnabled') === 'true';
 
         const CATEGORY_MAP = {
             math: { name: '数学', color: '#3b82f6', gradient: ['#3b82f6', '#1d4ed8'] },
@@ -955,8 +959,10 @@
             const q = query(collection(db, 'questions'), orderBy('shareTime', 'desc'));
             unsubscribe = onSnapshot(q, (snapshot) => {
                 allQuestions = [];
-                snapshot.forEach((doc) => {
-                    allQuestions.push({ id: doc.id, ...doc.data() });
+                snapshot.forEach((d) => {
+                    const data = { id: d.id, ...d.data() };
+                    if (reviewEnabled && data.approved === false) return;
+                    allQuestions.push(data);
                 });
                 renderQuestions();
             }, (error) => {
@@ -1158,7 +1164,8 @@
                         description,
                         sharerName,
                         shareTime: serverTimestamp(),
-                        coverDataUrl
+                        coverDataUrl,
+                        approved: !reviewEnabled
                     });
 
                     showToast('分享成功！', 'success');
@@ -1207,7 +1214,8 @@
                         sharerName,
                         shareTime: serverTimestamp(),
                         coverDataUrl,
-                        imageBase64
+                        imageBase64,
+                        approved: !reviewEnabled
                     });
 
                     showToast('分享成功！', 'success');
@@ -1330,6 +1338,8 @@
                 ${q.description ? `<p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">${escapeHtml(q.description)}</p>` : ''}
                 <div class="detail-actions">
                     <button class="detail-btn download" onclick="window.downloadToNotebook('${q.id}')">📥 收录到错题本</button>
+                    ${q.approved === false ? `<button class="detail-btn" style="background:rgba(16,185,129,0.1);color:var(--accent-green)" onclick="window.approveQuestion('${q.id}')">✅ 通过审核</button>` : ''}
+                    <button class="detail-btn" style="background:rgba(239,68,68,0.1);color:var(--accent-red)" onclick="window.deleteQuestion('${q.id}')">🗑 删除</button>
                 </div>
             `;
 
@@ -1414,6 +1424,8 @@
         function showMainApp() {
             document.getElementById('mainApp').style.display = '';
             document.getElementById('loadingState').style.display = 'block';
+            const btn = document.getElementById('reviewToggleBtn');
+            if (btn) btn.textContent = reviewEnabled ? '🔒 审核中' : '🔓 免审核';
         }
 
         async function initApp() {
@@ -1431,6 +1443,15 @@
             document.getElementById('uploadBtn').addEventListener('click', () => {
                 if (!db) { showToast('请等待 Firebase 连接', 'error'); return; }
                 openUploadModal();
+            });
+
+            document.getElementById('reviewToggleBtn').addEventListener('click', () => {
+                reviewEnabled = !reviewEnabled;
+                localStorage.setItem('reviewEnabled', reviewEnabled);
+                const btn = document.getElementById('reviewToggleBtn');
+                btn.textContent = reviewEnabled ? '🔒 审核中' : '🔓 免审核';
+                startListening();
+                showToast(reviewEnabled ? '已开启审核模式' : '已关闭审核，所有题目直接展示');
             });
 
             document.getElementById('uploadCloseBtn').addEventListener('click', closeUploadModal);
@@ -1503,7 +1524,66 @@
         function init() {
             bindEvents();
             initApp();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('share') === '1') {
+                handlePendingShare();
+            }
         }
+
+        async function handlePendingShare() {
+            const pending = localStorage.getItem('pendingShare');
+            if (!pending) return;
+
+            try {
+                const data = JSON.parse(pending);
+                localStorage.removeItem('pendingShare');
+
+                await new Promise(r => setTimeout(r, 2000));
+
+                const coverDataUrl = await generateCover(data);
+
+                await addDoc(collection(db, 'questions'), {
+                    type: data.type,
+                    category: data.category,
+                    content: data.content,
+                    description: data.description,
+                    sharerName: data.sharerName,
+                    shareTime: serverTimestamp(),
+                    coverDataUrl,
+                    approved: true
+                });
+
+                showToast('分享成功！', 'success');
+            } catch (error) {
+                console.error('Share error:', error);
+                showToast('分享失败: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteQuestion(id) {
+            if (!confirm('确定删除这道题目吗？')) return;
+            try {
+                await deleteDoc(doc(db, 'questions', id));
+                showToast('已删除', 'success');
+                document.getElementById('detailModal').classList.remove('active');
+            } catch (error) {
+                showToast('删除失败: ' + error.message, 'error');
+            }
+        }
+
+        async function approveQuestion(id) {
+            try {
+                await updateDoc(doc(db, 'questions', id), { approved: true });
+                showToast('已通过审核', 'success');
+                document.getElementById('detailModal').classList.remove('active');
+            } catch (error) {
+                showToast('操作失败: ' + error.message, 'error');
+            }
+        }
+
+        window.deleteQuestion = deleteQuestion;
+        window.approveQuestion = approveQuestion;
 
         window.addEventListener('DOMContentLoaded', init);
     </script>

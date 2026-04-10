@@ -487,29 +487,18 @@
 
         .hero-card {
             width: 100%;
-            max-width: 480px;
-            background: linear-gradient(165deg, rgba(22, 30, 46, 0.95) 0%, rgba(15, 21, 35, 0.98) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 28px;
-            padding: 48px 36px 36px;
+            max-width: 580px;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 40px 32px 32px;
             text-align: center;
             position: relative;
-            box-shadow:
-                0 4px 6px -1px rgba(0, 0, 0, 0.2),
-                0 10px 40px -8px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            box-shadow: none;
         }
 
         .hero-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent 0%, var(--accent-cyan) 50%, transparent 100%);
-            opacity: 0.5;
+            display: none;
         }
 
         .hero-tag {
@@ -776,48 +765,6 @@
             font-size: 13px;
             color: var(--text-secondary);
             font-weight: 500;
-        }
-
-        .gesture-hint {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg-elevated);
-            padding: 10px 20px;
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border-color);
-        }
-
-        .gesture-hint-icon {
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .gesture-hint-icon svg {
-            width: 14px;
-            height: 14px;
-            color: var(--bg-primary);
-        }
-
-        .gesture-hint-text {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .gesture-hint kbd {
-            background: var(--bg-primary);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            color: var(--accent-cyan);
-            border: 1px solid var(--border-color);
-            font-family: inherit;
-            margin-left: 4px;
         }
 
         .ai-panel {
@@ -2332,11 +2279,6 @@
             background: var(--accent-cyan);
         }
 
-        .mode-indicator.gesture-detected .mode-dot {
-            background: var(--accent-green);
-            animation: pulse 1s infinite;
-        }
-
         .toast {
             position: fixed;
             bottom: 80px;
@@ -2356,96 +2298,6 @@
         .toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
-        }
-
-        .gesture-status {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            padding: 12px 20px;
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
-            font-size: 13px;
-            color: var(--text-secondary);
-            z-index: 200;
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .gesture-status.active {
-            display: flex;
-        }
-
-        .gesture-status-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .gesture-status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--text-muted);
-        }
-
-        .gesture-status-dot.detected {
-            background: var(--accent-cyan);
-        }
-
-        .gesture-status-dot.ok-gesture {
-            background: var(--accent-green);
-            animation: pulse 1s infinite;
-        }
-
-        .gesture-progress {
-            width: 100%;
-            height: 4px;
-            background: var(--bg-elevated);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .gesture-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
-            width: 0%;
-            transition: width 0.1s linear;
-        }
-
-        .hand-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 15;
-        }
-
-        .ok-gesture-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            border: 6px solid var(--accent-green);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            z-index: 300;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-        }
-
-        .ok-gesture-indicator.show {
-            display: flex;
-            animation: countdownPop 0.3s ease;
         }
 
         .countdown-number {
@@ -2556,22 +2408,57 @@
                 padding: 8px;
                 border-right: none;
                 border-bottom: 1px solid var(--border-color);
+                order: 2;
             }
-            .toolbar-logo { margin-bottom: 0; margin-right: 12px; }
-            .toolbar-points { margin-bottom: 0; margin-right: 12px; }
+            .main-content { width: 100%; order: 1; }
+            .toolbar-logo { margin-bottom: 0; margin-right: 8px; width: 32px; height: 32px; }
+            .toolbar-logo svg { width: 16px; height: 16px; }
+            .toolbar-points { margin-bottom: 0; margin-right: 8px; font-size: 9px; padding: 2px 6px; }
             .toolbar-section { 
                 flex-direction: row;
                 margin-bottom: 0;
-                margin-right: 8px;
+                margin-right: 4px;
+                gap: 2px;
             }
             .toolbar-section-label { display: none; }
-            .main-content { width: 100%; }
+            .toolbar-btn { width: 40px; height: 40px; }
+            .toolbar-btn svg { width: 16px; height: 16px; }
+            .toolbar-btn span { display: none; }
+            .start-menu { bottom: 60px; left: 8px; top: auto; right: auto; }
+            .sidebar-panel { width: 100%; right: 0; left: 0; top: auto; bottom: 0; max-height: 70vh; border-radius: 16px 16px 0 0; }
+            .hero-card { max-width: 100%; padding: 24px 20px 20px; }
+            .hero-title { font-size: clamp(32px, 6vw, 48px); letter-spacing: 4px; }
+            .hero-motto { font-size: clamp(13px, 2.5vw, 18px); letter-spacing: 2px; }
+            .guide-steps { gap: 8px; }
+            .guide-step { padding: 6px 10px; }
+            .status-bar { height: 40px; }
+            .status-content { padding: 0 12px; }
+            .camera-placeholder { padding: 16px; }
         }
 
         @media (max-width: 480px) {
-            .toolbar-btn { width: 42px; height: 42px; }
-            .toolbar-btn span { display: none; }
-            .toolbar-btn svg { width: 18px; height: 18px; }
+            .toolbar { padding: 6px 4px; }
+            .toolbar-btn { width: 36px; height: 36px; }
+            .toolbar-btn svg { width: 15px; height: 15px; }
+            .toolbar-logo { width: 28px; height: 28px; margin-right: 4px; }
+            .toolbar-points { font-size: 8px; padding: 2px 4px; }
+            .hero-card { padding: 20px 16px 16px; }
+            .hero-title { font-size: clamp(28px, 8vw, 40px); letter-spacing: 3px; }
+            .hero-motto { font-size: clamp(12px, 3vw, 16px); letter-spacing: 1px; }
+            .hero-desc { font-size: 11px; }
+            .guide-step-text { font-size: 12px; }
+            .start-camera-btn { padding: 12px 16px; font-size: 13px; }
+            .feature-list { gap: 8px; }
+            .feature-icon { width: 34px; height: 34px; }
+            .feature-icon svg { width: 15px; height: 15px; }
+        }
+
+        @media (max-height: 600px) and (max-width: 768px) {
+            .hero-card { padding: 12px 16px; }
+            .hero-tag { margin-bottom: 12px; }
+            .hero-title { margin-bottom: 8px; }
+            .hero-motto { line-height: 1.5; }
+            .guide-steps { gap: 4px; margin-bottom: 16px; }
         }
     </style>
 </head>
@@ -2622,11 +2509,11 @@
                         </svg>
                         <span>迷宫</span>
                     </button>
-                    <button class="start-menu-item" data-action="reward">
+                    <button class="start-menu-item" data-action="quiz">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            <path d="M9 18l6-6-6-6"/><circle cx="12" cy="12" r="10"/>
                         </svg>
-                        <span>每日奖励</span>
+                        <span>知识闯关</span>
                     </button>
                 </div>
             </div>
@@ -2724,11 +2611,18 @@
                     </svg>
                     <span>迷宫</span>
                 </button>
-                <button class="toolbar-btn" id="dailyRewardBtn" title="每日奖励">
+                <button class="toolbar-btn" id="quizBtn" title="知识闯关">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    <span>闯关</span>
+                </button>
+                <button class="toolbar-btn" id="dailyRewardBtn" title="每日签到">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
-                    <span>奖励</span>
+                    <span>签到</span>
                 </button>
                 <button class="toolbar-btn" id="gameBtn" title="小游戏">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2738,20 +2632,6 @@
                         <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
                     </svg>
                     <span>游戏</span>
-                </button>
-                <button class="toolbar-btn" id="settingsBtn" title="设置">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                    </svg>
-                    <span>设置</span>
-                </button>
-                <button class="toolbar-btn" id="exitBtn" title="退出">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/><line x1="8" y1="12" x2="21" y2="12"/>
-                    </svg>
-                    <span>退出</span>
                 </button>
             </div>
         </aside>
@@ -2862,6 +2742,12 @@
                                     <polyline points="17 21 17 13 7 13 7 21"/>
                                 </svg>
                             </button>
+                            <button class="sidebar-icon-btn" id="shareWriteBtn" title="分享到题库" style="color:var(--accent-purple)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                     <div class="sidebar-result-content" id="writeResultContent"></div>
@@ -2896,6 +2782,12 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                    </svg>
+                                </button>
+                                <button class="sidebar-icon-btn" id="shareKnowledgeBtn" title="分享到题库" style="color:var(--accent-purple)">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
                                     </svg>
                                 </button>
                             </div>
@@ -3048,6 +2940,12 @@
                                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                                     </svg>
                                 </button>
+                                <button class="sidebar-icon-btn" id="shareCodeBtn" title="分享到题库" style="color:var(--accent-purple)">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                         <div class="sidebar-result-content" id="codeResultContent"></div>
@@ -3087,6 +2985,45 @@
             </div>
         </div>
 
+        <div class="sidebar-panel" id="quizSidebar">
+            <div class="sidebar-panel-header">
+                <h3><span>知识</span> 闯关</h3>
+                <button class="sidebar-close-btn" id="closeQuizSidebar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="sidebar-panel-content">
+                <div id="quizStartScreen">
+                    <div style="text-align:center;padding:20px 0">
+                        <div style="font-size:48px;margin-bottom:12px">🏆</div>
+                        <h3 style="margin:0 0 8px;color:var(--text-primary)">知识闯关</h3>
+                        <p style="font-size:13px;color:var(--text-secondary);margin:0 0 20px">每次5道题，考验你的综合知识！</p>
+                        <button class="sidebar-btn primary" id="startQuizBtn" style="width:100%">开始闯关</button>
+                    </div>
+                </div>
+                <div id="quizPlayScreen" style="display:none">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                        <span id="quizProgress" style="font-size:12px;color:var(--text-muted)">第 1/5 题</span>
+                        <span id="quizScore" style="font-size:14px;font-weight:600;color:var(--accent-cyan)">0 分</span>
+                    </div>
+                    <div id="quizQuestion" style="font-size:14px;color:var(--text-primary);line-height:1.6;margin-bottom:16px;padding:12px;background:var(--bg-elevated);border-radius:8px"></div>
+                    <div id="quizOptions" style="display:flex;flex-direction:column;gap:8px"></div>
+                    <button class="sidebar-btn primary" id="quizNextBtn" style="width:100%;margin-top:16px;display:none">下一题</button>
+                </div>
+                <div id="quizResultScreen" style="display:none">
+                    <div style="text-align:center;padding:20px 0">
+                        <div id="quizResultEmoji" style="font-size:48px;margin-bottom:12px">🎉</div>
+                        <h3 id="quizResultTitle" style="margin:0 0 8px;color:var(--text-primary)">闯关完成！</h3>
+                        <p id="quizResultScore" style="font-size:24px;font-weight:700;color:var(--accent-cyan);margin:0 0 8px"></p>
+                        <p id="quizResultMsg" style="font-size:13px;color:var(--text-secondary);margin:0 0 20px"></p>
+                        <button class="sidebar-btn primary" id="retryQuizBtn" style="width:100%">再来一次</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="sidebar-panel" id="mazeSidebar">
             <div class="sidebar-panel-header">
                 <h3><span>迷宫</span> 探险</h3>
@@ -3117,34 +3054,7 @@
             </div>
         </div>
 
-        <div class="sidebar-panel" id="dailyRewardSidebar">
-            <div class="sidebar-panel-header">
-                <h3><span>每日</span> 奖励</h3>
-                <button class="sidebar-close-btn" id="closeDailyRewardSidebar">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="sidebar-panel-content">
-                <div class="daily-reward-content">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                    </div>
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 10px 0; color: var(--text-primary);">每日登录奖励</h3>
-                        <p style="margin: 0; font-size: 32px; font-weight: 700; color: var(--accent-cyan);">+100 积分</p>
-                    </div>
-                    <div id="dailyRewardStatus" style="text-align: center; margin-bottom: 20px;">
-                        <p style="margin: 0; color: var(--text-secondary);">点击下方按钮领取奖励</p>
-                    </div>
-                    <button class="sidebar-btn primary" id="claimDailyRewardBtn" style="width: 100%;">领取每日奖励</button>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 15px; text-align: center;">每日可领取一次，次日重置</p>
-                </div>
-            </div>
-        </div>
+        <div class="sidebar-panel" id="dailyRewardSidebar" style="display:none"></div>
 
         <div class="sidebar-panel" id="calculatorSidebar">
             <div class="sidebar-panel-header">
@@ -3297,7 +3207,6 @@
             <div class="camera-view" id="cameraView">
                 <div class="camera-container">
                     <video id="videoElement" autoplay playsinline></video>
-                    <canvas id="handCanvas" class="hand-canvas hidden"></canvas>
                     <canvas id="selectionCanvas" class="selection-overlay hidden"></canvas>
                     <div class="camera-placeholder" id="cameraPlaceholder">
                         <div class="welcome-wrapper">
@@ -3337,6 +3246,17 @@
                                         <circle cx="12" cy="13" r="4"/>
                                     </svg>
                                     启动摄像头
+                                </button>
+
+                                <button class="start-camera-btn" id="heroQuestionBankBtn" style="margin-top:10px;background:linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-pink) 100%);box-shadow:0 4px 20px rgba(139,92,246,0.25)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                        <line x1="8" y1="7" x2="16" y2="7"/>
+                                        <line x1="8" y1="11" x2="16" y2="11"/>
+                                        <line x1="8" y1="15" x2="12" y2="15"/>
+                                    </svg>
+                                    📚 共享题库 — 万千题目等你来
                                 </button>
 
                                 <div class="feature-list">
@@ -3380,15 +3300,7 @@
                         <div class="status-dot" id="statusDot"></div>
                         <span class="status-text" id="statusText">摄像头未启动</span>
                     </div>
-                    <div class="gesture-hint">
-                        <div class="gesture-hint-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                            </svg>
-                        </div>
-                        <span class="gesture-hint-text">OK手势拍照</span>
-                        <kbd>ESC取消</kbd>
-                    </div>
+
                 </div>
             </div>
 
@@ -3423,6 +3335,13 @@
                                     <polyline points="7 3 7 8 15 8"/>
                                 </svg>
                                 保存到错题本
+                            </button>
+                            <button class="action-btn secondary" id="shareToBankBtn" style="background:rgba(139,92,246,0.15);color:var(--accent-purple);border-color:rgba(139,92,246,0.3)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                </svg>
+                                分享到题库
                             </button>
                         </div>
                     </div>
@@ -3678,29 +3597,12 @@
         <span id="modeText">摄像头模式</span>
     </div>
 
-    <div class="gesture-status" id="gestureStatus">
-        <div class="gesture-status-row">
-            <div class="gesture-status-dot" id="handDetectedDot"></div>
-            <span id="handStatusText">未检测到手</span>
-        </div>
-        <div class="gesture-progress">
-            <div class="gesture-progress-bar" id="gestureProgressBar"></div>
-        </div>
-    </div>
-
-    <div class="ok-gesture-indicator" id="okGestureIndicator">
-        <div class="countdown-number" id="countdownNumber">3</div>
-        <div class="countdown-text" id="countdownText">请移开手势</div>
-    </div>
-
     <div class="toast" id="toast"></div>
 
     <script>
         let videoElement = null;
         let selectionCanvas = null;
         let selectionCtx = null;
-        let handCanvas = null;
-        let handCtx = null;
         let isSelecting = false;
         let startX = 0;
         let startY = 0;
@@ -3747,11 +3649,6 @@
             videoElement = document.getElementById('videoElement');
             selectionCanvas = document.getElementById('selectionCanvas');
             selectionCtx = selectionCanvas.getContext('2d');
-            handCanvas = document.getElementById('handCanvas');
-            handCtx = handCanvas.getContext('2d');
-            handDetectedDot = document.getElementById('handDetectedDot');
-            handStatusText = document.getElementById('handStatusText');
-            gestureProgressBar = document.getElementById('gestureProgressBar');
 
             document.getElementById('cameraBtn').addEventListener('click', startCamera);
             document.getElementById('startCameraBtn').addEventListener('click', startCamera);
@@ -3759,7 +3656,7 @@
             document.getElementById('captureBtn').addEventListener('click', captureFullFrame);
             document.getElementById('notebookBtn').addEventListener('click', openNotebook);
             document.getElementById('questionBankBtn').addEventListener('click', openQuestionBank);
-            document.getElementById('settingsBtn').addEventListener('click', openSettings);
+            document.getElementById('heroQuestionBankBtn').addEventListener('click', openQuestionBank);
             document.getElementById('aiModeBtn').addEventListener('click', () => {
                 if (currentQuestionImage) {
                     showAIPanel();
@@ -3789,6 +3686,10 @@
             document.getElementById('clearWriteBtn').addEventListener('click', clearWriteForm);
             document.getElementById('copyWriteBtn').addEventListener('click', copyArticle);
             document.getElementById('saveWriteBtn').addEventListener('click', saveArticle);
+            document.getElementById('shareWriteBtn').addEventListener('click', () => shareToQuestionBank('write'));
+            document.getElementById('shareKnowledgeBtn').addEventListener('click', () => shareToQuestionBank('knowledge'));
+            document.getElementById('shareCodeBtn').addEventListener('click', () => shareToQuestionBank('code'));
+            document.getElementById('shareToBankBtn').addEventListener('click', () => shareToQuestionBank('solve'));
             document.getElementById('generateKnowledgeBtn').addEventListener('click', generateKnowledge);
             document.getElementById('copyKnowledgeBtn').addEventListener('click', copyKnowledge);
             document.getElementById('generateAuditBtn').addEventListener('click', generateAudit);
@@ -3804,10 +3705,13 @@
             document.getElementById('startGameBtn').addEventListener('click', startGame);
             document.getElementById('mazeBtn').addEventListener('click', openMazePanel);
             document.getElementById('closeMazeSidebar').addEventListener('click', hideMazePanel);
+            document.getElementById('quizBtn').addEventListener('click', openQuizPanel);
+            document.getElementById('closeQuizSidebar').addEventListener('click', hideQuizPanel);
+            document.getElementById('startQuizBtn').addEventListener('click', startQuiz);
+            document.getElementById('quizNextBtn').addEventListener('click', nextQuizQuestion);
+            document.getElementById('retryQuizBtn').addEventListener('click', startQuiz);
             document.getElementById('startMazeBtn').addEventListener('click', startMazeGame);
             document.getElementById('dailyRewardBtn').addEventListener('click', openDailyRewardPanel);
-            document.getElementById('closeDailyRewardSidebar').addEventListener('click', hideDailyRewardPanel);
-            document.getElementById('claimDailyRewardBtn').addEventListener('click', claimDailyReward);
             document.getElementById('startMenuBtn').addEventListener('click', toggleStartMenu);
             
             document.querySelectorAll('.start-menu-item').forEach(item => {
@@ -3847,8 +3751,7 @@
             
             document.getElementById('equationType').addEventListener('change', switchEquationType);
             document.getElementById('solveEquationBtn').addEventListener('click', solveEquation);
-            
-            document.getElementById('exitBtn').addEventListener('click', exitApp);
+
             document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
             document.getElementById('clearNotebookBtn').addEventListener('click', clearNotebook);
             document.getElementById('exportNotebookBtn').addEventListener('click', exportNotebook);
@@ -3932,6 +3835,10 @@
 
             updateNotebookDisplay();
             updatePointsDisplay();
+
+            if (checkDailyReward()) {
+                setTimeout(() => { claimDailyReward(); }, 1500);
+            }
         }
 
         function captureFullFrame() {
@@ -3983,8 +3890,6 @@
                 videoElement.onloadedmetadata = () => {
                     selectionCanvas.width = videoElement.videoWidth;
                     selectionCanvas.height = videoElement.videoHeight;
-                    handCanvas.width = videoElement.videoWidth;
-                    handCanvas.height = videoElement.videoHeight;
                 };
             } catch (err) {
                 console.error('摄像头启动失败:', err);
@@ -4006,14 +3911,12 @@
                 selectionCanvas.style.width = videoElement.offsetWidth + 'px';
                 selectionCanvas.style.height = videoElement.offsetHeight + 'px';
                 selectionCanvas.classList.remove('hidden');
-                handCanvas.classList.remove('hidden');
                 document.getElementById('selectionBtn').classList.add('active');
                 document.getElementById('modeIndicator').classList.add('selection-mode');
                 document.getElementById('modeText').textContent = '框选模式';
                 showToast('框选模式已开启，拖拽鼠标框选');
             } else {
                 selectionCanvas.classList.add('hidden');
-                handCanvas.classList.add('hidden');
                 document.getElementById('selectionBtn').classList.remove('active');
                 document.getElementById('modeIndicator').classList.remove('selection-mode');
                 document.getElementById('modeText').textContent = '摄像头模式';
@@ -4450,13 +4353,63 @@
             window.open('question-bank.html', '_blank');
         }
 
+        function shareToQuestionBank(type) {
+            let content = '';
+            let category = 'other';
+            let description = '';
+
+            if (type === 'solve') {
+                const answerEl = document.getElementById('answerContent');
+                content = answerEl ? answerEl.textContent : '';
+                category = 'math';
+                description = 'AI解题结果';
+            } else if (type === 'write') {
+                const writeEl = document.getElementById('writeResultContent');
+                content = writeEl ? writeEl.textContent : '';
+                category = 'chinese';
+                description = 'AI写作作品';
+            } else if (type === 'knowledge') {
+                const knowledgeEl = document.getElementById('knowledgeResultContent');
+                content = knowledgeEl ? knowledgeEl.textContent : '';
+                category = 'other';
+                description = 'AI知识点讲解';
+            } else if (type === 'code') {
+                const codeEl = document.getElementById('codeResultContent');
+                content = codeEl ? codeEl.textContent : '';
+                category = 'other';
+                description = 'AI编程解答';
+            }
+
+            if (!content || content.trim().length < 10) {
+                showToast('内容太少，无法分享', 'error');
+                return;
+            }
+
+            const sharerName = localStorage.getItem('sharerName') || prompt('请输入你的昵称：');
+            if (!sharerName) return;
+            localStorage.setItem('sharerName', sharerName);
+
+            const shareData = {
+                type: 'text',
+                category: category,
+                content: content.trim().slice(0, 5000),
+                description: description,
+                sharerName: sharerName,
+                shareTime: new Date().toISOString()
+            };
+
+            localStorage.setItem('pendingShare', JSON.stringify(shareData));
+            window.open('question-bank.html?share=1', '_blank');
+            showToast('正在跳转到题库分享...', 'success');
+        }
+
         let chatHistory = [];
 
         function closeAllSidebars() {
             const sidebars = [
                 'chatPanel', 'aiWriteSidebar', 'aiKnowledgeSidebar', 
                 'aiAuditSidebar', 'aiEncyclopediaSidebar', 'aiCodeSidebar',
-                'gameSidebar', 'mazeSidebar', 'dailyRewardSidebar', 'calculatorSidebar',
+                'gameSidebar', 'mazeSidebar', 'dailyRewardSidebar', 'calculatorSidebar', 'quizSidebar',
                 'aiPanel', 'notebookSidebar', 'settingsSidebar'
             ];
             sidebars.forEach(id => {
@@ -5087,46 +5040,243 @@
 
         function claimDailyReward() {
             if (!checkDailyReward()) {
-                showToast('今日已领取奖励，请明天再来');
+                showToast('今日已签到，明天继续加油！');
                 return;
             }
 
             addPoints(100);
             localStorage.setItem('lastLoginDate', today);
-            showToast('恭喜！获得100积分每日奖励');
 
-            document.getElementById('dailyRewardStatus').innerHTML = `
-                <p style="margin: 0; color: var(--accent-cyan); font-weight: 600;">✓ 今日奖励已领取</p>
-            `;
-            document.getElementById('claimDailyRewardBtn').disabled = true;
-            document.getElementById('claimDailyRewardBtn').textContent = '已领取';
+            const quotes = [
+                '坚持就是胜利，每天进步一点点！',
+                '学如逆水行舟，不进则退！',
+                '宝剑锋从磨砺出，梅花香自苦寒来！',
+                '千里之行，始于足下！',
+                '书山有路勤为径，学海无涯苦作舟！',
+                '业精于勤荒于嬉，行成于思毁于随！',
+                '天行健，君子以自强不息！',
+                '少壮不努力，老大徒伤悲！',
+                '黑发不知勤学早，白首方悔读书迟！',
+                '路漫漫其修远兮，吾将上下而求索！'
+            ];
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            showToast(`🌟 +100积分 | ${quote}`, 'success');
         }
 
         function openDailyRewardPanel() {
-            closeAllSidebars();
-            const canClaim = checkDailyReward();
-            const statusDiv = document.getElementById('dailyRewardStatus');
-            const claimBtn = document.getElementById('claimDailyRewardBtn');
-
-            if (canClaim) {
-                statusDiv.innerHTML = `
-                    <p style="margin: 0; color: var(--text-secondary);">点击下方按钮领取奖励</p>
-                `;
-                claimBtn.disabled = false;
-                claimBtn.textContent = '领取每日奖励';
-            } else {
-                statusDiv.innerHTML = `
-                    <p style="margin: 0; color: var(--accent-cyan); font-weight: 600;">✓ 今日奖励已领取</p>
-                `;
-                claimBtn.disabled = true;
-                claimBtn.textContent = '已领取';
-            }
-
-            document.getElementById('dailyRewardSidebar').classList.add('active');
+            claimDailyReward();
         }
 
         function hideDailyRewardPanel() {
-            document.getElementById('dailyRewardSidebar').classList.remove('active');
+        }
+
+        const QUIZ_BANK = [
+            {q:"地球上最大的海洋是什么？",o:["大西洋","太平洋","印度洋","北冰洋"],a:1},
+            {q:"光年是什么单位？",o:["时间单位","距离单位","速度单位","质量单位"],a:1},
+            {q:"《红楼梦》的作者是谁？",o:["罗贯中","施耐庵","曹雪芹","吴承恩"],a:2},
+            {q:"人体最大的器官是什么？",o:["心脏","肝脏","皮肤","大脑"],a:2},
+            {q:"世界上最高的山峰是什么？",o:["乔戈里峰","珠穆朗玛峰","干城章嘉峰","洛子峰"],a:1},
+            {q:"水的化学式是什么？",o:["CO2","H2O","NaCl","O2"],a:1},
+            {q:"太阳系中最大的行星是什么？",o:["土星","木星","天王星","海王星"],a:1},
+            {q:"中国最长的河流是什么？",o:["黄河","长江","珠江","淮河"],a:1},
+            {q:"DNA的中文全称是什么？",o:["核糖核酸","脱氧核糖核酸","蛋白质","氨基酸"],a:1},
+            {q:"世界上面积最大的国家是什么？",o:["中国","美国","加拿大","俄罗斯"],a:3},
+            {q:"《西游记》中孙悟空的武器叫什么？",o:["方天画戟","青龙偃月刀","金箍棒","丈八蛇矛"],a:2},
+            {q:"地球绕太阳公转一周大约需要多少天？",o:["365天","30天","24小时","100天"],a:0},
+            {q:"世界上最深的海沟是什么？",o:["日本海沟","马里亚纳海沟","汤加海沟","菲律宾海沟"],a:1},
+            {q:"爱因斯坦最著名的方程式是什么？",o:["F=ma","E=mc²","V=IR","PV=nRT"],a:1},
+            {q:"中国四大发明不包括以下哪项？",o:["造纸术","火药","地动仪","印刷术"],a:2},
+            {q:"人体有多少对染色体？",o:["22对","23对","24对","25对"],a:1},
+            {q:"世界上人口最多的国家是？",o:["印度","中国","美国","印尼"],a:0},
+            {q:"声音在真空中能传播吗？",o:["能","不能","有时能","取决于温度"],a:1},
+            {q:"莎士比亚是哪国人？",o:["法国","德国","英国","意大利"],a:2},
+            {q:"地球的自转周期大约是多少？",o:["12小时","24小时","365天","30天"],a:1},
+            {q:"世界上最小的国家是？",o:["摩纳哥","梵蒂冈","圣马力诺","列支敦士登"],a:1},
+            {q:"牛顿第一定律也叫什么？",o:["万有引力定律","惯性定律","加速度定律","作用力定律"],a:1},
+            {q:"唐诗《静夜思》的作者是？",o:["杜甫","白居易","李白","王维"],a:2},
+            {q:"地球的大气层中含量最多的气体是？",o:["氧气","二氧化碳","氮气","氢气"],a:2},
+            {q:"世界上最大的沙漠是？",o:["戈壁沙漠","撒哈拉沙漠","阿拉伯沙漠","卡拉哈里沙漠"],a:1},
+            {q:"《蒙娜丽莎》是谁的作品？",o:["毕加索","达芬奇","梵高","米开朗基罗"],a:1},
+            {q:"人体最硬的部分是什么？",o:["骨骼","指甲","牙釉质","头发"],a:2},
+            {q:"地球距太阳大约多远？",o:["1.5亿公里","3亿公里","5000万公里","10亿公里"],a:0},
+            {q:"世界上最大的哺乳动物是？",o:["大象","蓝鲸","长颈鹿","犀牛"],a:1},
+            {q:"中国有多少个省级行政区？",o:["30个","32个","34个","36个"],a:2},
+            {q:"元素周期表中第一个元素是？",o:["氧","碳","氢","氦"],a:2},
+            {q:"世界上流量最大的河流是？",o:["尼罗河","亚马逊河","长江","密西西比河"],a:1},
+            {q:"《三国演义》中'草船借箭'的是谁？",o:["周瑜","诸葛亮","曹操","鲁肃"],a:1},
+            {q:"月球绕地球一周大约多少天？",o:["7天","14天","27天","365天"],a:2},
+            {q:"世界上最大的淡水湖是？",o:["贝加尔湖","苏必利尔湖","里海","维多利亚湖"],a:1},
+            {q:"人体正常体温大约是多少？",o:["35°C","36.5°C","38°C","40°C"],a:1},
+            {q:"'但愿人长久，千里共婵娟'的作者是？",o:["李白","杜甫","苏轼","辛弃疾"],a:2},
+            {q:"电流的单位是什么？",o:["伏特","安培","欧姆","瓦特"],a:1},
+            {q:"世界上最大的岛屿是？",o:["马达加斯加","格陵兰岛","加里曼丹岛","新几内亚岛"],a:1},
+            {q:"光合作用主要发生在植物的哪个部位？",o:["根","茎","叶","花"],a:2},
+            {q:"'E=mc²'中c代表什么？",o:["光速","常数","电荷","质量"],a:0},
+            {q:"中国历史上第一个统一王朝是？",o:["夏朝","商朝","秦朝","周朝"],a:2},
+            {q:"世界上使用人数最多的语言是？",o:["英语","西班牙语","中文","印地语"],a:2},
+            {q:"地球的卫星是什么？",o:["太阳","月球","火星","金星"],a:1},
+            {q:"《水浒传》中梁山好汉有多少位？",o:["36位","72位","108位","120位"],a:2},
+            {q:"世界上最大的热带雨林在哪里？",o:["非洲","东南亚","南美洲","大洋洲"],a:2},
+            {q:"铁的化学符号是什么？",o:["Ir","Fe","Fr","Fi"],a:1},
+            {q:"一天中什么时候气温最高？",o:["中午12点","下午2点左右","上午10点","傍晚6点"],a:1},
+            {q:"'己所不欲，勿施于人'出自哪部经典？",o:["《道德经》","《论语》","《孟子》","《庄子》"],a:1},
+            {q:"世界上最大的珊瑚礁系统在哪里？",o:["红海","加勒比海","澳大利亚","马尔代夫"],a:2},
+            {q:"人体血液中负责运输氧气的是？",o:["白细胞","红细胞","血小板","血浆"],a:1},
+            {q:"地球的年龄大约是多少亿年？",o:["36","46","56","66"],a:1},
+            {q:"'四面楚歌'讲的是谁的故事？",o:["刘邦","项羽","韩信","张良"],a:1},
+            {q:"世界上最大的半岛是？",o:["印度半岛","阿拉伯半岛","中南半岛","朝鲜半岛"],a:1},
+            {q:"维生素C又叫什么？",o:["硫胺素","核黄素","抗坏血酸","烟酸"],a:2},
+            {q:"地球上海洋面积约占多少？",o:["50%","60%","71%","80%"],a:2},
+            {q:"《聊斋志异》的作者是？",o:["吴承恩","蒲松龄","曹雪芹","施耐庵"],a:1},
+            {q:"世界上最长的城墙是？",o:["哈德良长城","万里长城","柏林墙","西墙"],a:1},
+            {q:"钻石的主要成分是什么？",o:["硅","碳","铁","铝"],a:1},
+            {q:"世界上最大的内陆国是？",o:["蒙古","哈萨克斯坦","乍得","阿富汗"],a:1},
+            {q:"'破釜沉舟'讲的是谁？",o:["刘邦","项羽","曹操","诸葛亮"],a:1},
+            {q:"太阳系中离太阳最近的行星是？",o:["金星","水星","地球","火星"],a:1},
+            {q:"世界上最大的花是什么？",o:["向日葵","大王花","荷花","牡丹"],a:1},
+            {q:"中国最大的淡水湖是？",o:["洞庭湖","鄱阳湖","太湖","洪泽湖"],a:1},
+            {q:"'物竞天择，适者生存'是谁提出的？",o:["牛顿","爱因斯坦","达尔文","孟德尔"],a:2},
+            {q:"世界上最早的文字是什么？",o:["甲骨文","楔形文字","象形文字","字母文字"],a:1},
+            {q:"人体有多少块骨骼？",o:["106","206","306","406"],a:1},
+            {q:"世界上最大的宫殿是？",o:["凡尔赛宫","白金汉宫","故宫","克里姆林宫"],a:2},
+            {q:"'卧薪尝胆'讲的是谁？",o:["吴王夫差","越王勾践","齐桓公","晋文公"],a:1},
+            {q:"世界上最长的河流是？",o:["长江","亚马逊河","尼罗河","密西西比河"],a:2},
+            {q:"地球上的氧气主要由什么产生？",o:["热带雨林","海洋浮游植物","草原","苔藓"],a:1},
+            {q:"'三顾茅庐'讲的是谁请谁？",o:["刘备请诸葛亮","曹操请郭嘉","孙权请周瑜","关羽请张飞"],a:0},
+            {q:"世界上最大的盆地是？",o:["塔里木盆地","刚果盆地","准噶尔盆地","四川盆地"],a:1},
+            {q:"人体最大的细胞是？",o:["红细胞","卵细胞","神经细胞","肌肉细胞"],a:1},
+            {q:"世界上最大的活火山是？",o:["富士山","冒纳罗亚火山","维苏威火山","埃特纳火山"],a:1},
+            {q:"'入木三分'原本形容谁的书法？",o:["颜真卿","柳公权","王羲之","张旭"],a:2},
+            {q:"世界上最大的高原是？",o:["青藏高原","巴西高原","东非高原","德干高原"],a:1},
+            {q:"人体最长的骨骼是？",o:["肱骨","股骨","胫骨","脊柱"],a:1},
+            {q:"'望梅止渴'讲的是谁？",o:["刘备","曹操","孙权","诸葛亮"],a:1},
+            {q:"世界上最大的瀑布是？",o:["尼亚加拉瀑布","维多利亚瀑布","安赫尔瀑布","伊瓜苏瀑布"],a:2},
+            {q:"中国最早的诗歌总集是？",o:["《楚辞》","《诗经》","《唐诗三百首》","《乐府诗集》"],a:1},
+            {q:"世界上最大的海湾是？",o:["墨西哥湾","孟加拉湾","几内亚湾","波斯湾"],a:1},
+            {q:"地球的内核主要由什么组成？",o:["硅","铁和镍","碳","铝"],a:1},
+            {q:"'纸上谈兵'讲的是谁？",o:["赵括","马谡","韩信","白起"],a:0},
+            {q:"世界上最大的陨石坑是？",o:["巴林杰陨石坑","弗里德堡陨石坑","希克苏鲁伯陨石坑","曼尼古根陨石坑"],a:1},
+            {q:"中国四大名著不包括？",o:["《红楼梦》","《聊斋志异》","《三国演义》","《水浒传》"],a:1},
+            {q:"世界上最大的三角洲是？",o:["尼罗河三角洲","恒河三角洲","长江三角洲","湄公河三角洲"],a:1},
+            {q:"'完璧归赵'讲的是谁？",o:["廉颇","蔺相如","李牧","赵括"],a:1},
+            {q:"世界上最大的石窟是？",o:["敦煌莫高窟","龙门石窟","云冈石窟","阿旃陀石窟"],a:0},
+            {q:"世界上最大的水母是？",o:["海月水母","狮鬃水母","箱水母","僧帽水母"],a:1},
+            {q:"'负荆请罪'讲的是谁？",o:["廉颇","蔺相如","白起","李牧"],a:0},
+            {q:"世界上最大的蜥蜴是？",o:["鬣蜥","科莫多龙","变色龙","壁虎"],a:1},
+            {q:"世界上最大的两栖动物是？",o:["青蛙","大鲵","蝾螈","蟾蜍"],a:1},
+            {q:"'围魏救赵'是谁的计策？",o:["孙武","孙膑","庞涓","吴起"],a:1},
+            {q:"世界上最大的蜘蛛是？",o:["黑寡妇","捕鸟蛛","狼蛛","跳蛛"],a:1},
+            {q:"世界上最大的鸟是？",o:["鸵鸟","企鹅","信天翁","鹰"],a:0},
+            {q:"'指鹿为马'讲的是谁？",o:["赵高","李斯","秦始皇","胡亥"],a:0},
+            {q:"世界上最大的鱼类是？",o:["大白鲨","鲸鲨","金枪鱼","旗鱼"],a:1},
+            {q:"世界上最大的无脊椎动物是？",o:["大王乌贼","水母","章鱼","龙虾"],a:0},
+            {q:"'毛遂自荐'讲的是谁？",o:["平原君","毛遂","信陵君","春申君"],a:1}
+        ];
+
+        let quizQuestions = [];
+        let quizIndex = 0;
+        let quizScoreVal = 0;
+        let quizAnswered = false;
+
+        function openQuizPanel() {
+            closeAllSidebars();
+            document.getElementById('quizSidebar').classList.add('active');
+            document.getElementById('quizStartScreen').style.display = '';
+            document.getElementById('quizPlayScreen').style.display = 'none';
+            document.getElementById('quizResultScreen').style.display = 'none';
+        }
+
+        function hideQuizPanel() {
+            document.getElementById('quizSidebar').classList.remove('active');
+        }
+
+        function startQuiz() {
+            const shuffled = [...QUIZ_BANK].sort(() => Math.random() - 0.5);
+            quizQuestions = shuffled.slice(0, 5);
+            quizIndex = 0;
+            quizScoreVal = 0;
+            quizAnswered = false;
+
+            document.getElementById('quizStartScreen').style.display = 'none';
+            document.getElementById('quizPlayScreen').style.display = '';
+            document.getElementById('quizResultScreen').style.display = 'none';
+
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const q = quizQuestions[quizIndex];
+            document.getElementById('quizProgress').textContent = `第 ${quizIndex + 1}/5 题`;
+            document.getElementById('quizScore').textContent = `${quizScoreVal} 分`;
+            document.getElementById('quizQuestion').textContent = q.q;
+            document.getElementById('quizNextBtn').style.display = 'none';
+            quizAnswered = false;
+
+            const optionsDiv = document.getElementById('quizOptions');
+            optionsDiv.innerHTML = q.o.map((opt, i) => {
+                const labels = ['A', 'B', 'C', 'D'];
+                return `<button onclick="window.answerQuiz(${i})" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-elevated);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:13px;cursor:pointer;text-align:left;transition:all 0.2s" onmouseover="this.style.borderColor='rgba(0,212,170,0.4)'" onmouseout="if(!this.dataset.selected)this.style.borderColor='var(--border-color)'"><span style="width:22px;height:22px;background:var(--bg-secondary);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:var(--accent-cyan)">${labels[i]}</span>${opt}</button>`;
+            }).join('');
+        }
+
+        window.answerQuiz = function(idx) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const q = quizQuestions[quizIndex];
+            const btns = document.getElementById('quizOptions').children;
+
+            for (let i = 0; i < btns.length; i++) {
+                btns[i].dataset.selected = 'true';
+                if (i === q.a) {
+                    btns[i].style.borderColor = 'var(--accent-green)';
+                    btns[i].style.background = 'rgba(16,185,129,0.1)';
+                } else if (i === idx && idx !== q.a) {
+                    btns[i].style.borderColor = 'var(--accent-red)';
+                    btns[i].style.background = 'rgba(239,68,68,0.1)';
+                }
+            }
+
+            if (idx === q.a) {
+                quizScoreVal += 20;
+                document.getElementById('quizScore').textContent = `${quizScoreVal} 分`;
+            }
+
+            document.getElementById('quizNextBtn').style.display = '';
+            document.getElementById('quizNextBtn').textContent = quizIndex < 4 ? '下一题' : '查看结果';
+        };
+
+        function nextQuizQuestion() {
+            quizIndex++;
+            if (quizIndex >= 5) {
+                showQuizResult();
+            } else {
+                renderQuizQuestion();
+            }
+        }
+
+        function showQuizResult() {
+            document.getElementById('quizPlayScreen').style.display = 'none';
+            document.getElementById('quizResultScreen').style.display = '';
+
+            document.getElementById('quizResultScore').textContent = `${quizScoreVal} 分`;
+
+            if (quizScoreVal === 100) {
+                document.getElementById('quizResultEmoji').textContent = '🏆';
+                document.getElementById('quizResultTitle').textContent = '满分通关！';
+                document.getElementById('quizResultMsg').textContent = '你太厉害了！知识渊博！+50积分';
+                addPoints(50);
+            } else if (quizScoreVal >= 60) {
+                document.getElementById('quizResultEmoji').textContent = '🎉';
+                document.getElementById('quizResultTitle').textContent = '闯关成功！';
+                document.getElementById('quizResultMsg').textContent = '表现不错，继续加油！+20积分';
+                addPoints(20);
+            } else {
+                document.getElementById('quizResultEmoji').textContent = '💪';
+                document.getElementById('quizResultTitle').textContent = '再接再厉！';
+                document.getElementById('quizResultMsg').textContent = '多学多练，下次一定行！+10积分';
+                addPoints(10);
+            }
         }
 
         let calculatorInput = '';
@@ -5180,8 +5330,8 @@
                 case 'maze':
                     openMazePanel();
                     break;
-                case 'reward':
-                    openDailyRewardPanel();
+                case 'quiz':
+                    openQuizPanel();
                     break;
             }
         }
