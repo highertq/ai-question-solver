@@ -442,6 +442,7 @@
             cursor: crosshair;
             z-index: 10;
             pointer-events: auto;
+            touch-action: none;
         }
 
         .selection-overlay.disabled {
@@ -707,6 +708,99 @@
             color: var(--text-muted);
             font-weight: 500;
             letter-spacing: 0.5px;
+        }
+
+        .mobile-camera-actions {
+            position: absolute;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 20;
+            width: min(92%, 420px);
+            padding: 10px;
+            border-radius: 20px;
+            background: rgba(10, 15, 26, 0.78);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .mobile-action-btn {
+            flex: 1;
+            min-height: 54px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 16px;
+            background: rgba(26, 34, 52, 0.92);
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .mobile-action-btn svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .mobile-action-btn:active {
+            transform: scale(0.97);
+        }
+
+        .mobile-action-btn.primary {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+            color: var(--bg-primary);
+            border-color: transparent;
+        }
+
+        .mobile-action-btn.secondary {
+            background: rgba(59, 130, 246, 0.14);
+            color: #dbeafe;
+            border-color: rgba(59, 130, 246, 0.22);
+        }
+
+        .mobile-action-btn.accent {
+            background: rgba(0, 212, 170, 0.14);
+            color: var(--accent-cyan);
+            border-color: rgba(0, 212, 170, 0.22);
+        }
+
+        .mobile-action-btn.active {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.22) 0%, rgba(59, 130, 246, 0.22) 100%);
+            border-color: rgba(0, 212, 170, 0.45);
+            color: var(--text-primary);
+        }
+
+        .mobile-action-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .mobile-camera-tip {
+            position: absolute;
+            left: 50%;
+            bottom: 92px;
+            transform: translateX(-50%);
+            display: none;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.88);
+            border: 1px solid rgba(0, 212, 170, 0.25);
+            color: var(--text-primary);
+            font-size: 12px;
+            line-height: 1.4;
+            white-space: nowrap;
+            z-index: 19;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
         }
 
         @media (max-height: 720px) {
@@ -2398,50 +2492,135 @@
         }
 
         @media (max-width: 768px) {
-            .app-container { flex-direction: column; }
+            .app-container { flex-direction: column; height: 100dvh; }
             .toolbar { 
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
                 width: 100%; 
                 height: auto;
                 flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                padding: 8px;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                gap: 8px;
+                padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
                 border-right: none;
-                border-bottom: 1px solid var(--border-color);
+                border-top: 1px solid var(--border-color);
+                border-bottom: none;
                 order: 2;
+                overflow-x: auto;
+                overflow-y: hidden;
+                background: rgba(17, 24, 39, 0.94);
+                backdrop-filter: blur(18px);
+                -webkit-backdrop-filter: blur(18px);
+                z-index: 180;
             }
-            .main-content { width: 100%; order: 1; }
-            .toolbar-logo { margin-bottom: 0; margin-right: 8px; width: 32px; height: 32px; }
+            .main-content {
+                width: 100%;
+                order: 1;
+                padding-bottom: calc(152px + env(safe-area-inset-bottom, 0px));
+            }
+            .toolbar-logo {
+                flex: 0 0 auto;
+                margin-bottom: 0;
+                margin-right: 0;
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+            }
             .toolbar-logo svg { width: 16px; height: 16px; }
-            .toolbar-points { margin-bottom: 0; margin-right: 8px; font-size: 9px; padding: 2px 6px; }
+            .toolbar-points {
+                flex: 0 0 auto;
+                margin-bottom: 0;
+                margin-right: 0;
+                font-size: 10px;
+                padding: 0 12px;
+                height: 48px;
+                display: inline-flex;
+                align-items: center;
+                white-space: nowrap;
+                border-radius: 14px;
+            }
             .toolbar-section { 
                 flex-direction: row;
+                flex: 0 0 auto;
                 margin-bottom: 0;
-                margin-right: 4px;
-                gap: 2px;
+                margin-right: 0;
+                gap: 8px;
             }
             .toolbar-section-label { display: none; }
-            .toolbar-btn { width: 40px; height: 40px; }
-            .toolbar-btn svg { width: 16px; height: 16px; }
-            .toolbar-btn span { display: none; }
-            .start-menu { bottom: 60px; left: 8px; top: auto; right: auto; }
-            .sidebar-panel { width: 100%; right: 0; left: 0; top: auto; bottom: 0; max-height: 70vh; border-radius: 16px 16px 0 0; }
+            .toolbar-btn {
+                flex: 0 0 auto;
+                width: 68px;
+                height: 64px;
+                gap: 6px;
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.03);
+            }
+            .toolbar-btn svg { width: 18px; height: 18px; }
+            .toolbar-btn span {
+                display: block;
+                font-size: 11px;
+                line-height: 1;
+            }
+            .start-menu {
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                width: auto;
+                bottom: calc(94px + env(safe-area-inset-bottom, 0px));
+                top: auto;
+                max-height: min(60vh, 420px);
+                overflow-y: auto;
+            }
+            .sidebar-panel {
+                width: 100%;
+                right: 0;
+                left: 0;
+                top: auto;
+                bottom: 0;
+                max-height: 78vh;
+                border-radius: 16px 16px 0 0;
+            }
             .hero-card { max-width: 100%; padding: 24px 20px 20px; }
             .hero-title { font-size: clamp(32px, 6vw, 48px); letter-spacing: 4px; }
             .hero-motto { font-size: clamp(13px, 2.5vw, 18px); letter-spacing: 2px; }
             .guide-steps { gap: 8px; }
             .guide-step { padding: 6px 10px; }
-            .status-bar { height: 40px; }
+            .status-bar { height: 48px; }
             .status-content { padding: 0 12px; }
             .camera-placeholder { padding: 16px; }
+            .camera-view { padding-bottom: 12px; }
+            .camera-container { align-items: stretch; }
+            #videoElement {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 0;
+            }
+            .mobile-camera-actions,
+            .mobile-camera-tip { display: flex; }
+            .mode-indicator {
+                top: 12px;
+                right: 12px;
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            .toast {
+                bottom: calc(168px + env(safe-area-inset-bottom, 0px));
+                width: min(88vw, 360px);
+                text-align: center;
+            }
         }
 
         @media (max-width: 480px) {
-            .toolbar { padding: 6px 4px; }
-            .toolbar-btn { width: 36px; height: 36px; }
-            .toolbar-btn svg { width: 15px; height: 15px; }
-            .toolbar-logo { width: 28px; height: 28px; margin-right: 4px; }
-            .toolbar-points { font-size: 8px; padding: 2px 4px; }
+            .toolbar { padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px)); gap: 6px; }
+            .toolbar-btn { width: 62px; height: 60px; }
+            .toolbar-btn svg { width: 17px; height: 17px; }
+            .toolbar-btn span { font-size: 10px; }
+            .toolbar-logo { width: 44px; height: 44px; }
+            .toolbar-points { font-size: 9px; height: 44px; padding: 0 10px; }
             .hero-card { padding: 20px 16px 16px; }
             .hero-title { font-size: clamp(28px, 8vw, 40px); letter-spacing: 3px; }
             .hero-motto { font-size: clamp(12px, 3vw, 16px); letter-spacing: 1px; }
@@ -2451,6 +2630,23 @@
             .feature-list { gap: 8px; }
             .feature-icon { width: 34px; height: 34px; }
             .feature-icon svg { width: 15px; height: 15px; }
+            .mobile-camera-actions {
+                width: calc(100% - 24px);
+                bottom: 12px;
+                padding: 8px;
+                gap: 8px;
+            }
+            .mobile-action-btn {
+                min-height: 50px;
+                font-size: 12px;
+                gap: 6px;
+            }
+            .mobile-camera-tip {
+                width: calc(100% - 32px);
+                white-space: normal;
+                text-align: center;
+                bottom: 78px;
+            }
         }
 
         @media (max-height: 600px) and (max-width: 768px) {
@@ -2459,6 +2655,13 @@
             .hero-title { margin-bottom: 8px; }
             .hero-motto { line-height: 1.5; }
             .guide-steps { gap: 4px; margin-bottom: 16px; }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-camera-actions,
+            .mobile-camera-tip {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -3208,6 +3411,30 @@
                 <div class="camera-container">
                     <video id="videoElement" autoplay playsinline></video>
                     <canvas id="selectionCanvas" class="selection-overlay hidden"></canvas>
+                    <div class="mobile-camera-tip" id="mobileCameraTip">按住并拖动即可框选题目区域</div>
+                    <div class="mobile-camera-actions" id="mobileCameraActions">
+                        <button class="mobile-action-btn primary" id="mobileStartCameraBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                <circle cx="12" cy="13" r="4"/>
+                            </svg>
+                            <span>启动</span>
+                        </button>
+                        <button class="mobile-action-btn secondary" id="mobileSelectionBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-dasharray="4 2"/>
+                                <path d="M9 9l6 6m0-6l-6 6"/>
+                            </svg>
+                            <span>框选</span>
+                        </button>
+                        <button class="mobile-action-btn accent" id="mobileCaptureBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="4"/>
+                            </svg>
+                            <span>拍照</span>
+                        </button>
+                    </div>
                     <div class="camera-placeholder" id="cameraPlaceholder">
                         <div class="welcome-wrapper">
                             <div class="hero-card">
@@ -3613,6 +3840,7 @@
         let currentQuestionImage = null;
         let currentAnswer = null;
         let conversationHistory = [];
+        let toastTimer = null;
 
         const notebook = JSON.parse(localStorage.getItem('notebook') || '[]');
 
@@ -3645,6 +3873,83 @@
             }
         }
 
+        function isMobileViewport() {
+            return window.matchMedia('(max-width: 768px)').matches;
+        }
+
+        function syncSelectionCanvasSize() {
+            if (!videoElement || !selectionCanvas || !videoElement.videoWidth || !videoElement.videoHeight) {
+                return;
+            }
+
+            selectionCanvas.width = videoElement.videoWidth;
+            selectionCanvas.height = videoElement.videoHeight;
+            selectionCanvas.style.width = videoElement.offsetWidth + 'px';
+            selectionCanvas.style.height = videoElement.offsetHeight + 'px';
+        }
+
+        function updateMobileCaptureUI() {
+            const mobileStartBtn = document.getElementById('mobileStartCameraBtn');
+            const mobileSelectionBtn = document.getElementById('mobileSelectionBtn');
+            const mobileCaptureBtn = document.getElementById('mobileCaptureBtn');
+            const mobileTip = document.getElementById('mobileCameraTip');
+
+            if (!mobileStartBtn || !mobileSelectionBtn || !mobileCaptureBtn || !mobileTip) {
+                return;
+            }
+
+            const cameraReady = !!stream;
+            mobileStartBtn.classList.toggle('hidden', cameraReady);
+            mobileSelectionBtn.disabled = !cameraReady;
+            mobileCaptureBtn.disabled = !cameraReady;
+            mobileSelectionBtn.classList.toggle('active', selectionMode);
+            mobileTip.style.display = cameraReady && selectionMode && isMobileViewport() ? 'flex' : 'none';
+        }
+
+        function getSelectionPoint(event) {
+            const rect = selectionCanvas.getBoundingClientRect();
+            const pointer = event.touches?.[0] || event.changedTouches?.[0] || event;
+            const scaleX = selectionCanvas.width / rect.width;
+            const scaleY = selectionCanvas.height / rect.height;
+
+            return {
+                x: (pointer.clientX - rect.left) * scaleX,
+                y: (pointer.clientY - rect.top) * scaleY
+            };
+        }
+
+        function beginSelection(point) {
+            startX = point.x;
+            startY = point.y;
+            currentX = point.x;
+            currentY = point.y;
+            isSelecting = true;
+        }
+
+        function drawSelectionBox() {
+            selectionCtx.clearRect(0, 0, selectionCanvas.width, selectionCanvas.height);
+            selectionCtx.strokeStyle = '#00d4aa';
+            selectionCtx.lineWidth = 3;
+            selectionCtx.setLineDash([10, 5]);
+            selectionCtx.strokeRect(startX, startY, currentX - startX, currentY - startY);
+            selectionCtx.fillStyle = 'rgba(0, 212, 170, 0.1)';
+            selectionCtx.fillRect(startX, startY, currentX - startX, currentY - startY);
+        }
+
+        function finishSelection() {
+            isSelecting = false;
+
+            const width = Math.abs(currentX - startX);
+            const height = Math.abs(currentY - startY);
+
+            if (width > 50 && height > 50) {
+                captureSelection();
+            } else {
+                selectionCtx.clearRect(0, 0, selectionCanvas.width, selectionCanvas.height);
+                showToast('框选区域太小，请重新选择');
+            }
+        }
+
         async function init() {
             videoElement = document.getElementById('videoElement');
             selectionCanvas = document.getElementById('selectionCanvas');
@@ -3654,6 +3959,9 @@
             document.getElementById('startCameraBtn').addEventListener('click', startCamera);
             document.getElementById('selectionBtn').addEventListener('click', toggleSelectionMode);
             document.getElementById('captureBtn').addEventListener('click', captureFullFrame);
+            document.getElementById('mobileStartCameraBtn').addEventListener('click', startCamera);
+            document.getElementById('mobileSelectionBtn').addEventListener('click', toggleSelectionMode);
+            document.getElementById('mobileCaptureBtn').addEventListener('click', captureFullFrame);
             document.getElementById('notebookBtn').addEventListener('click', openNotebook);
             document.getElementById('questionBankBtn').addEventListener('click', openQuestionBank);
             document.getElementById('heroQuestionBankBtn').addEventListener('click', openQuestionBank);
@@ -3723,7 +4031,7 @@
             document.addEventListener('click', (e) => {
                 const startMenu = document.getElementById('startMenu');
                 const startMenuBtn = document.getElementById('startMenuBtn');
-                if (!startMenu.contains(e.target) && e.target !== startMenuBtn) {
+                if (!startMenu.contains(e.target) && !startMenuBtn.contains(e.target)) {
                     hideStartMenu();
                 }
             });
@@ -3762,6 +4070,10 @@
             selectionCanvas.addEventListener('mousemove', updateSelection);
             selectionCanvas.addEventListener('mouseup', endSelection);
             selectionCanvas.addEventListener('mouseleave', cancelSelection);
+            selectionCanvas.addEventListener('touchstart', startSelection, { passive: false });
+            selectionCanvas.addEventListener('touchmove', updateSelection, { passive: false });
+            selectionCanvas.addEventListener('touchend', endSelection, { passive: false });
+            selectionCanvas.addEventListener('touchcancel', cancelSelection, { passive: false });
 
             const chatInput = document.getElementById('chatInput');
             const chatSendBtn = document.getElementById('chatSendBtn');
@@ -3835,6 +4147,12 @@
 
             updateNotebookDisplay();
             updatePointsDisplay();
+            updateMobileCaptureUI();
+
+            window.addEventListener('resize', () => {
+                syncSelectionCanvasSize();
+                updateMobileCaptureUI();
+            });
 
             if (checkDailyReward()) {
                 setTimeout(() => { claimDailyReward(); }, 1500);
@@ -3886,14 +4204,15 @@
                 document.getElementById('cameraBtn').classList.add('active');
                 
                 showToast('摄像头启动成功');
+                updateMobileCaptureUI();
 
                 videoElement.onloadedmetadata = () => {
-                    selectionCanvas.width = videoElement.videoWidth;
-                    selectionCanvas.height = videoElement.videoHeight;
+                    syncSelectionCanvasSize();
                 };
             } catch (err) {
                 console.error('摄像头启动失败:', err);
                 showToast('摄像头启动失败，请检查权限');
+                updateMobileCaptureUI();
             }
         }
 
@@ -3906,15 +4225,12 @@
             selectionMode = !selectionMode;
 
             if (selectionMode) {
-                selectionCanvas.width = videoElement.videoWidth;
-                selectionCanvas.height = videoElement.videoHeight;
-                selectionCanvas.style.width = videoElement.offsetWidth + 'px';
-                selectionCanvas.style.height = videoElement.offsetHeight + 'px';
+                syncSelectionCanvasSize();
                 selectionCanvas.classList.remove('hidden');
                 document.getElementById('selectionBtn').classList.add('active');
                 document.getElementById('modeIndicator').classList.add('selection-mode');
                 document.getElementById('modeText').textContent = '框选模式';
-                showToast('框选模式已开启，拖拽鼠标框选');
+                showToast(isMobileViewport() ? '框选模式已开启，手指拖动即可框选' : '框选模式已开启，拖拽鼠标框选');
             } else {
                 selectionCanvas.classList.add('hidden');
                 document.getElementById('selectionBtn').classList.remove('active');
@@ -3922,57 +4238,43 @@
                 document.getElementById('modeText').textContent = '摄像头模式';
                 cancelSelection();
             }
+
+            updateMobileCaptureUI();
         }
 
         function startSelection(e) {
             if (!selectionMode) return;
-            
-            const rect = selectionCanvas.getBoundingClientRect();
-            const scaleX = selectionCanvas.width / rect.width;
-            const scaleY = selectionCanvas.height / rect.height;
-            
-            startX = (e.clientX - rect.left) * scaleX;
-            startY = (e.clientY - rect.top) * scaleY;
-            isSelecting = true;
+            if (e.cancelable) e.preventDefault();
+
+            beginSelection(getSelectionPoint(e));
         }
 
         function updateSelection(e) {
             if (!isSelecting) return;
-            
-            const rect = selectionCanvas.getBoundingClientRect();
-            const scaleX = selectionCanvas.width / rect.width;
-            const scaleY = selectionCanvas.height / rect.height;
-            
-            currentX = (e.clientX - rect.left) * scaleX;
-            currentY = (e.clientY - rect.top) * scaleY;
-            
-            selectionCtx.clearRect(0, 0, selectionCanvas.width, selectionCanvas.height);
-            
-            selectionCtx.strokeStyle = '#00d4aa';
-            selectionCtx.lineWidth = 3;
-            selectionCtx.setLineDash([10, 5]);
-            selectionCtx.strokeRect(startX, startY, currentX - startX, currentY - startY);
-            
-            selectionCtx.fillStyle = 'rgba(0, 212, 170, 0.1)';
-            selectionCtx.fillRect(startX, startY, currentX - startX, currentY - startY);
+            if (e.cancelable) e.preventDefault();
+
+            const point = getSelectionPoint(e);
+            currentX = point.x;
+            currentY = point.y;
+
+            drawSelectionBox();
         }
 
         function endSelection(e) {
             if (!isSelecting) return;
-            isSelecting = false;
-            
-            const width = Math.abs(currentX - startX);
-            const height = Math.abs(currentY - startY);
-            
-            if (width > 50 && height > 50) {
-                captureSelection();
-            } else {
-                selectionCtx.clearRect(0, 0, selectionCanvas.width, selectionCanvas.height);
-                showToast('框选区域太小，请重新选择');
+            if (e && e.cancelable) e.preventDefault();
+
+            if (e) {
+                const point = getSelectionPoint(e);
+                currentX = point.x;
+                currentY = point.y;
             }
+
+            finishSelection();
         }
 
-        function cancelSelection() {
+        function cancelSelection(e) {
+            if (e && e.cancelable) e.preventDefault();
             isSelecting = false;
             if (selectionCtx) {
                 selectionCtx.clearRect(0, 0, selectionCanvas.width, selectionCanvas.height);
@@ -6469,9 +6771,14 @@ ${problem}
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.add('show');
-            
-            setTimeout(() => {
+
+            if (toastTimer) {
+                clearTimeout(toastTimer);
+            }
+
+            toastTimer = setTimeout(() => {
                 toast.classList.remove('show');
+                toastTimer = null;
             }, 3000);
         }
 
@@ -6499,6 +6806,9 @@ ${problem}
             visibility: visible !important;
             border: 2px solid #ffffff !important;
             outline: none !important;
+            touch-action: none !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
         }
 
         #floatingBall:hover {
@@ -6513,13 +6823,63 @@ ${problem}
             stroke: #ffffff !important;
             stroke-width: 2.5 !important;
         }
+
+        @media (max-width: 768px) {
+            #floatingBall {
+                width: 52px !important;
+                height: 52px !important;
+                right: 16px !important;
+                bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
+                box-shadow: 0 10px 28px rgba(0, 212, 170, 0.45) !important;
+            }
+
+            #floatingBall svg {
+                width: 24px !important;
+                height: 24px !important;
+            }
+        }
     </style>
 
     <script>
         // 独立的悬浮球功能实现
         (function() {
+            function isMobileBallViewport() {
+                return window.matchMedia('(max-width: 768px)').matches;
+            }
+
+            function getBallBounds(ball) {
+                const margin = 12;
+                const bottomInset = isMobileBallViewport() ? 148 : 24;
+
+                return {
+                    minX: margin,
+                    minY: margin,
+                    maxX: window.innerWidth - ball.offsetWidth - margin,
+                    maxY: window.innerHeight - ball.offsetHeight - bottomInset
+                };
+            }
+
+            function clampBallPosition(ball, x, y) {
+                const bounds = getBallBounds(ball);
+                return {
+                    x: Math.max(bounds.minX, Math.min(x, bounds.maxX)),
+                    y: Math.max(bounds.minY, Math.min(y, bounds.maxY))
+                };
+            }
+
+            function resetBallPosition(ball) {
+                ball.style.left = 'auto';
+                ball.style.top = 'auto';
+                ball.style.right = isMobileBallViewport() ? '16px' : '30px';
+                ball.style.bottom = isMobileBallViewport() ? '118px' : '30px';
+            }
+
             // 初始化悬浮球
             function initFloatingBall() {
+                if (document.getElementById('floatingBall')) {
+                    return;
+                }
+
                 // 创建悬浮球元素
                 const floatingBall = document.createElement('div');
                 floatingBall.id = 'floatingBall';
@@ -6538,54 +6898,78 @@ ${problem}
                 
                 // 初始化状态
                 let isDragging = false;
-                let offsetX, offsetY;
+                let offsetX = 0;
+                let offsetY = 0;
                 let hasMoved = false;
-                
-                // 鼠标按下事件
-                floatingBall.addEventListener('mousedown', (e) => {
+                let dragStartX = 0;
+                let dragStartY = 0;
+
+                resetBallPosition(floatingBall);
+
+                floatingBall.addEventListener('pointerdown', (e) => {
                     isDragging = true;
                     hasMoved = false;
+                    dragStartX = e.clientX;
+                    dragStartY = e.clientY;
+                    floatingBall.setPointerCapture(e.pointerId);
                     offsetX = e.clientX - floatingBall.getBoundingClientRect().left;
                     offsetY = e.clientY - floatingBall.getBoundingClientRect().top;
                     floatingBall.style.cursor = 'grabbing';
+                    e.preventDefault();
                 });
-                
-                // 鼠标移动事件
-                document.addEventListener('mousemove', (e) => {
+
+                document.addEventListener('pointermove', (e) => {
                     if (isDragging) {
-                        hasMoved = true;
-                        const x = e.clientX - offsetX;
-                        const y = e.clientY - offsetY;
-                        
-                        // 限制在视窗内
-                        const maxX = window.innerWidth - floatingBall.offsetWidth;
-                        const maxY = window.innerHeight - floatingBall.offsetHeight;
-                        
-                        const boundedX = Math.max(0, Math.min(x, maxX));
-                        const boundedY = Math.max(0, Math.min(y, maxY));
-                        
-                        floatingBall.style.left = boundedX + 'px';
-                        floatingBall.style.top = boundedY + 'px';
+                        const rawX = e.clientX - offsetX;
+                        const rawY = e.clientY - offsetY;
+                        const position = clampBallPosition(floatingBall, rawX, rawY);
+
+                        if (Math.abs(e.clientX - dragStartX) > 6 || Math.abs(e.clientY - dragStartY) > 6) {
+                            hasMoved = true;
+                        }
+
+                        floatingBall.style.left = position.x + 'px';
+                        floatingBall.style.top = position.y + 'px';
                         floatingBall.style.right = 'auto';
                         floatingBall.style.bottom = 'auto';
+                        e.preventDefault();
                     }
                 });
-                
-                // 鼠标释放事件
-                document.addEventListener('mouseup', () => {
+
+                function stopDragging(e) {
                     isDragging = false;
                     floatingBall.style.cursor = 'move';
-                });
-                
-                // 点击事件 - 打开计算器
-                floatingBall.addEventListener('click', (e) => {
+                    if (e && e.pointerId !== undefined && floatingBall.hasPointerCapture(e.pointerId)) {
+                        floatingBall.releasePointerCapture(e.pointerId);
+                    }
+                }
+
+                document.addEventListener('pointerup', stopDragging);
+                document.addEventListener('pointercancel', stopDragging);
+
+                floatingBall.addEventListener('click', () => {
                     if (!hasMoved) {
-                        // 检查openCalculatorPanel函数是否存在
                         if (typeof openCalculatorPanel === 'function') {
                             openCalculatorPanel();
                         } else {
                             console.error('openCalculatorPanel函数未找到');
                         }
+                    }
+
+                    hasMoved = false;
+                });
+
+                window.addEventListener('resize', () => {
+                    if (floatingBall.style.left && floatingBall.style.left !== 'auto') {
+                        const position = clampBallPosition(
+                            floatingBall,
+                            parseFloat(floatingBall.style.left || '0'),
+                            parseFloat(floatingBall.style.top || '0')
+                        );
+                        floatingBall.style.left = position.x + 'px';
+                        floatingBall.style.top = position.y + 'px';
+                    } else {
+                        resetBallPosition(floatingBall);
                     }
                 });
                 

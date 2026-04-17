@@ -63,6 +63,26 @@
 
         .header p { color: var(--text-secondary); font-size: 14px; }
 
+        .network-warning {
+            display: none;
+            margin-bottom: 20px;
+            padding: 14px 16px;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(249, 115, 22, 0.28);
+            background: rgba(249, 115, 22, 0.1);
+            color: #fed7aa;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .network-warning.show {
+            display: block;
+        }
+
+        .network-warning strong {
+            color: #fff7ed;
+        }
+
         .setup-panel {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -726,14 +746,223 @@
         }
 
         @media (max-width: 768px) {
-            .container { padding: 16px; }
-            .toolbar { flex-direction: column; align-items: flex-start; }
-            .toolbar-actions { width: 100%; }
-            .search-bar { flex-direction: column; }
-            .search-input-wrap, .category-select { width: 100%; min-width: unset; }
-            .question-grid { grid-template-columns: 1fr; }
-            .form-row { flex-direction: column; gap: 0; }
-            .setup-content { padding: 24px; }
+            body {
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                margin-bottom: 20px;
+                padding: 12px 0 18px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+                line-height: 1.3;
+            }
+
+            .header p {
+                font-size: 13px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                margin-bottom: 18px;
+            }
+
+            .toolbar-left {
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .toolbar h2 {
+                font-size: 18px;
+            }
+
+            .toolbar-actions {
+                width: 100%;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                min-height: 44px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 18px;
+            }
+
+            .search-input-wrap,
+            .category-select {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .search-input,
+            .category-select {
+                min-height: 44px;
+                font-size: 14px;
+            }
+
+            .question-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .q-card:hover {
+                transform: none;
+            }
+
+            .q-card-cover {
+                height: 156px;
+            }
+
+            .q-card-body {
+                padding: 14px;
+            }
+
+            .q-card-desc {
+                -webkit-line-clamp: 3;
+            }
+
+            .modal-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .modal-box {
+                max-width: none;
+                width: 100%;
+                max-height: min(88vh, 760px);
+                border-radius: 20px 20px 0 0;
+                border-left: none;
+                border-right: none;
+                border-bottom: none;
+            }
+
+            .modal-header {
+                padding: 16px 18px;
+            }
+
+            .modal-header h2 {
+                font-size: 17px;
+            }
+
+            .modal-body {
+                padding: 18px;
+            }
+
+            .modal-footer {
+                flex-direction: column-reverse;
+                padding: 14px 18px calc(14px + env(safe-area-inset-bottom, 0px));
+            }
+
+            .btn {
+                width: 100%;
+                min-height: 44px;
+            }
+
+            .type-toggle {
+                margin-bottom: 16px;
+            }
+
+            .type-toggle-btn {
+                min-height: 42px;
+                font-size: 12px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-input,
+            .form-textarea,
+            .form-select {
+                font-size: 14px;
+            }
+
+            .setup-content {
+                width: calc(100% - 24px);
+                padding: 24px 18px;
+                max-height: 88vh;
+                overflow-y: auto;
+            }
+
+            .setup-actions {
+                flex-direction: column;
+            }
+
+            .detail-info {
+                gap: 8px;
+            }
+
+            .detail-actions {
+                flex-direction: column;
+            }
+
+            .detail-btn {
+                width: 100%;
+                min-height: 44px;
+            }
+
+            .toast {
+                top: 12px;
+                left: 12px;
+                right: 12px;
+                width: auto;
+                transform: translateY(-20px);
+            }
+
+            .toast.show {
+                transform: translateY(0);
+            }
+
+            .image-viewer img {
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .toolbar-left {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .question-count {
+                font-size: 11px;
+            }
+
+            .q-card-cover {
+                height: 142px;
+            }
+
+            .upload-area {
+                padding: 24px 12px;
+            }
+
+            .upload-preview {
+                max-height: 180px;
+            }
         }
     </style>
 </head>
@@ -743,6 +972,8 @@
             <h1>📚 识题王 - 线上题库</h1>
             <p>汇聚优质题目，共享学习资源</p>
         </div>
+
+        <div class="network-warning" id="networkWarning"></div>
 
         <div class="toolbar">
             <div class="toolbar-left">
@@ -886,6 +1117,22 @@
     </div>
 
     <div class="toast" id="toast"></div>
+
+    <script>
+        window.__questionBankBooted = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.setTimeout(() => {
+                if (window.__questionBankBooted) return;
+
+                const warning = document.getElementById('networkWarning');
+                if (!warning) return;
+
+                warning.innerHTML = '<strong>题库连接可能失败。</strong> 当前页面依赖 Firebase / Google 资源；在中国大陆网络环境下，`gstatic.com`、`firebaseapp.com`、Firestore 往往会加载失败或非常不稳定，所以题库可能打不开、无法同步或一直加载。';
+                warning.classList.add('show');
+            }, 5000);
+        });
+    </script>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
@@ -1435,12 +1682,18 @@
 
         async function initApp() {
             try {
+                window.__questionBankBooted = true;
                 await connectFirebase();
                 initAuthListener();
                 await loadAutoApproveSetting();
                 showMainApp();
             } catch (error) {
                 console.error('Firebase connection failed:', error);
+                const warning = document.getElementById('networkWarning');
+                if (warning) {
+                    warning.innerHTML = '<strong>题库当前不可用。</strong> Firebase 连接失败。若你在中国大陆访问，这通常不是页面布局问题，而是 Google / Firebase 网络不可达。建议把题库数据迁到国内可访问的后端，或改成你自己的 Vercel API + 数据库。';
+                    warning.classList.add('show');
+                }
                 showToast('连接 Firebase 失败: ' + error.message, 'error');
             }
         }
