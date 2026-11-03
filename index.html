@@ -3445,10 +3445,9 @@
 
                                 <h1 class="hero-title">识 题 王</h1>
 
-                                <div class="hero-motto">书山有路勤为径</div>
-                                <div class="hero-motto">学海无涯苦作舟</div>
+                                <div class="hero-motto">卡在哪一步？</div>
 
-                                <p class="hero-desc">拍照识题 · AI 解答 · 错题收录</p>
+                                <p class="hero-desc">拍下题目拿提示，写下一步再拍，检查推导。</p>
 
                                 <div class="hero-line"></div>
 
@@ -3467,6 +3466,7 @@
                                     </div>
                                 </div>
 
+                                <a class="start-camera-btn" href="/desk.html" style="text-decoration:none;background:#174c3c">进入纸上陪练 →</a>
                                 <button class="start-camera-btn" id="startCameraBtn">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
@@ -3483,7 +3483,7 @@
                                         <line x1="8" y1="11" x2="16" y2="11"/>
                                         <line x1="8" y1="15" x2="12" y2="15"/>
                                     </svg>
-                                    📚 共享题库 — 万千题目等你来
+                                    浏览共享题库
                                 </button>
 
                                 <div class="feature-list">
@@ -3750,25 +3750,6 @@
                     <div class="settings-section">
                         <div class="settings-section-title">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                                <line x1="12" y1="19" x2="12" y2="23"/>
-                                <line x1="8" y1="23" x2="16" y2="23"/>
-                            </svg>
-                            <span>手势识别设置</span>
-                        </div>
-                        <div class="settings-item">
-                            <label class="settings-label">
-                                <span>OK手势拍照时长</span>
-                                <span class="settings-description">保持OK手势触发拍照的时长(毫秒)</span>
-                            </label>
-                            <input type="number" class="settings-input" id="gestureDurationInput" value="1000" min="500" max="3000" step="100">
-                        </div>
-                    </div>
-
-                    <div class="settings-section">
-                        <div class="settings-section-title">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
@@ -3844,8 +3825,8 @@
 
         const notebook = JSON.parse(localStorage.getItem('notebook') || '[]');
 
-        let API_KEY = localStorage.getItem('apiKey') || 'sk-d457964eeeec46d0abc26e45a26db57e';
-        let API_URL = localStorage.getItem('apiUrl') || 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+        let API_KEY = localStorage.getItem('apiKey') || '';
+        let API_URL = localStorage.getItem('apiUrl') || '/api/chat';
         let PRIMARY_MODEL = localStorage.getItem('primaryModel') || 'qwen3.5-plus';
         let FALLBACK_MODEL = localStorage.getItem('fallbackModel') || 'qwen-vl-max';
         let userPoints = parseInt(localStorage.getItem('userPoints')) || 100;
@@ -4109,9 +4090,9 @@
             document.getElementById('clearChatBtn').addEventListener('click', clearChatHistory);
 
             document.addEventListener('keydown', (e) => {
+                if (e.code==='KeyW' && stream && !mazeGameRunning && !gameRunning && !e.repeat && !e.metaKey && !e.ctrlKey && !e.altKey && !e.target.closest('input,textarea,select,[contenteditable=true]')) { captureFullFrame(); return; }
                 if (e.key === 'Escape') {
                     cancelSelection();
-                    cancelCountdown();
                 }
                 if (e.key === ' ' || e.code === 'Space') {
                     if (gameRunning) {
@@ -4368,6 +4349,7 @@
                     },
                     body: JSON.stringify({
                         model: modelToUse,
+                        ...(modelToUse.startsWith("qwen3.5") ? {enable_thinking:false} : {}),
                         messages: messages,
                         stream: true
                     })
@@ -4391,7 +4373,9 @@
                     });
                 }
 
+                if (!response.ok) throw new Error(response.status === 503 ? '请在 Mac 上运行「配置百炼密钥」，然后重试。' : '百炼请求失败 (HTTP ' + response.status + ')');
                 const reader = response.body.getReader();
+                let pending = '';
                 const decoder = new TextDecoder();
                 let fullContent = '';
 
@@ -4404,9 +4388,10 @@
                     const { done, value } = await reader.read();
                     if (done) break;
 
-                    const chunk = decoder.decode(value);
+                    const chunk = pending + decoder.decode(value,{stream:true});
                     const lines = chunk.split('\n');
 
+                    pending = lines.pop();
                     for (const line of lines) {
                         if (line.startsWith('data: ') && line !== 'data: [DONE]') {
                             try {
@@ -4427,6 +4412,7 @@
                     }
                 }
 
+                if (!fullContent.trim()) throw new Error('模型没有返回解答');
                 currentAnswer = fullContent;
                 
                 if (typeof marked !== 'undefined') {
@@ -4464,7 +4450,7 @@
                 document.getElementById('answerContent').classList.remove('hidden');
                 document.getElementById('answerContent').innerHTML = `
                     <p style="color: #ef4444;">抱歉，AI分析失败。请检查网络连接后重试。</p>
-                    <p style="color: var(--text-muted); font-size: 14px; margin-top: 8px;">错误信息: ${error.message}</p>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-top: 8px;">错误信息: ${escapeHtml(error.message)}</p><button class="sidebar-btn" onclick="this.disabled=true;askAI()">用这张照片重试</button>
                 `;
             }
         }
@@ -4872,34 +4858,26 @@
             document.getElementById('apiUrlInput').value = API_URL;
             document.getElementById('primaryModelSelect').value = PRIMARY_MODEL;
             document.getElementById('fallbackModelSelect').value = FALLBACK_MODEL;
-            document.getElementById('gestureDurationInput').value = OK_GESTURE_DURATION;
         }
 
         function saveSettings() {
             const newApiUrl = document.getElementById('apiUrlInput').value.trim();
             const newPrimaryModel = document.getElementById('primaryModelSelect').value;
             const newFallbackModel = document.getElementById('fallbackModelSelect').value;
-            const newGestureDuration = parseInt(document.getElementById('gestureDurationInput').value);
 
             if (!newApiUrl) {
                 showToast('请输入API地址');
                 return;
             }
 
-            if (newGestureDuration < 500 || newGestureDuration > 3000) {
-                showToast('手势时长必须在500-3000毫秒之间');
-                return;
-            }
 
             API_URL = newApiUrl;
             PRIMARY_MODEL = newPrimaryModel;
             FALLBACK_MODEL = newFallbackModel;
-            OK_GESTURE_DURATION = newGestureDuration;
 
             localStorage.setItem('apiUrl', API_URL);
             localStorage.setItem('primaryModel', PRIMARY_MODEL);
             localStorage.setItem('fallbackModel', FALLBACK_MODEL);
-            localStorage.setItem('gestureDuration', OK_GESTURE_DURATION.toString());
 
             showToast('设置已保存');
         }
@@ -6984,5 +6962,24 @@ ${problem}
             }
         })();
     </script>
-</body>
+<aside id="station" style="position:fixed;left:12px;bottom:12px;z-index:99999;background:#123c39;color:white;padding:10px 16px;border-radius:12px;font:15px system-ui">正在连接拍题器</aside>
+<script>
+let lastShot=Number(sessionStorage.getItem('piShot') || 0);
+async function pollStation(){
+ const badge=document.querySelector('#station');
+ try{
+  const state=await (await fetch('/state')).json();
+  badge.textContent=!state.online?'拍题器离线':state.hardware!=='ready'?'请检查 USB 键盘和摄像头':state.failed?'拍摄失败，请再按 W':'拍题器就绪 · 按 W 拍题';
+  if(document.visibilityState==='visible' && state.seq && state.seq!==lastShot){
+   const picture=await (await fetch('/photo')).blob();
+   currentQuestionImage=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(picture)});
+   document.querySelector('#questionImage').src=currentQuestionImage;
+   lastShot=state.seq;sessionStorage.setItem('piShot',lastShot);
+   conversationHistory=[];showAIPanel();badge.textContent='已拍摄 · 正在解题';await askAI();
+  }
+ }catch{badge.textContent='Mac 接收服务连接中'}
+ setTimeout(pollStation,500);
+}
+if(location.hostname==='127.0.0.1' && location.port==='18765')pollStation();else document.querySelector('#station').hidden=true;
+</script></body>
 </html>

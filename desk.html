@@ -1,0 +1,77 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>识题王 · 纸上陪练</title>
+<link rel="stylesheet" href="/lib/katex.min.css"><script src="/lib/katex.min.js"></script><script src="/lib/auto-render.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f2eb;color:#172f2a;font:17px/1.6 system-ui,sans-serif}main{max-width:1480px;margin:auto;padding:24px clamp(18px,4vw,72px)}header,footer,.labels,.actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}header{border-bottom:1px solid #b9c1b6;padding-bottom:14px}small,.eyebrow{font:600 13px/1.5 system-ui;letter-spacing:.08em;color:#526b5c}h1{font-size:clamp(36px,5vw,72px);letter-spacing:-.07em;line-height:1.1;margin:24px 0 8px}p{margin:.55em 0}.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);margin:24px 0;gap:18px}section{border:1px solid #cdd1c7;border-radius:14px;padding:clamp(16px,2vw,32px);background:#fffefa;min-width:0}.paper{background:#143d33;color:white}.paper small{color:#b0d9bf}figure{margin:16px 0;background:#0f3129;aspect-ratio:4/3;display:grid;place-items:center;border-radius:8px;overflow:hidden}figure img{width:100%;height:100%;object-fit:contain;min-height:0}button,a{font:inherit}button{border:1px solid #96a69b;background:#fffefa;color:#16392f;border-radius:7px;padding:9px 17px;min-height:44px;cursor:pointer}button:first-child{background:#194e3c;color:white}button:disabled{opacity:.45;cursor:default}h2{line-height:1.25;margin:.5em 0;font-size:clamp(25px,3vw,38px)}#result{white-space:pre-wrap;overflow-wrap:anywhere;font-size:clamp(18px,1.7vw,25px);line-height:1.75}#result div{margin-top:.4em}.katex-display{overflow-x:auto}#thumb{width:68px;height:50px;object-fit:contain;vertical-align:middle;margin-right:10px}.actions{justify-content:flex-start;margin-top:18px}footer{font-size:14px;color:#53645b}a{color:inherit}[hidden]{display:none!important}@media(max-width:770px){.grid{grid-template-columns:1fr}h1{margin-top:18px}}
+</style><main><header><strong>识题王 &nbsp; / &nbsp; 学习台灯</strong><span id="device" role="status">正在连接拍题器</span></header>
+<h1>纸上陪练</h1><p>卡住了，按一下拿提示。写下一步，再按一下检查。</p>
+<div class="grid"><section class="paper"><div class="labels"><small>01　桌面实拍</small><span id="count">等待第一拍</span></div><label id="upload" hidden style="margin-top:12px"><strong>选择题目或续写照片</strong><br><input id="file" type="file" accept="image/*"></label><figure><span id="empty">把题放在灯下，按一下按钮或 W</span><img id="photo" alt="当前纸面照片" hidden></figure><div><img id="thumb" alt="上一拍纸面" hidden><span id="caption">请让题目和手写步骤都在镜头范围内。</span></div></section>
+<section><small>02　AI 辅导</small><h2 id="heading">从一道题开始</h2><small id="metrics" role="status"></small><div id="result">第一拍给你一个思考方向。写下一步，再拍一次，检查自己的推导。</div><div class="actions"><button id="full" disabled>看完整解法</button><button id="retry" hidden>用原图重试</button><button id="reset" disabled>换一道题</button></div></section></div>
+<footer><span>照片只在触发拍摄时提交给 AI</span><a href="/index.html">打开原版工具箱</a></footer></main>
+<script>
+const $=id=>document.getElementById(id);
+let shot='',previous='',seq=0,round=0,run,mode='hint';
+const prompts={
+ hint:'只根据照片。第一行准确复述题目。若已有笔迹，先核对学生写到的步骤，给一个具体的下一步提示。只写两三句，不揭晓最终答案。',
+ compare:'先看上一拍，再看当前拍。对照纸上实际新增或修改的笔迹，引用新增的那一行。判断这一步是否成立，指出第一个具体错误或给下一步提示。如果写完且正确就确认答案。若纸面没变化请直说；若明显换题，按新题给提示，勿捏造差异。',
+ full:'根据当前照片完整解题。分行写题意、关键步骤和答案。简洁准确。'
+};
+const math={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false};
+async function solve(kind){
+ run?.abort(); const controller=new AbortController();run=controller;mode=kind;
+ const started=performance.now();let first=0,received='',shown=0,complete=false;
+ $('heading').textContent={hint:'第一步怎么想',compare:'看看新写的这一步',full:'完整解法'}[kind];
+ $('retry').hidden=true;$('full').disabled=true;$('metrics').textContent='正在读纸面…';$('result').replaceChildren();
+ let row=document.createElement('div');$('result').append(row);
+ function paint(){
+  if(controller.signal.aborted)return;
+  const end=Math.min(received.length,shown+(matchMedia('(prefers-reduced-motion: reduce)').matches?Infinity:Math.max(1,Math.ceil((received.length-shown)/12))));
+  for(const ch of received.slice(shown,end)){
+   if(ch==='\n'){renderMathInElement(row,math);row=document.createElement('div');$('result').append(row);}
+   else if(row.lastChild?.nodeType===Node.TEXT_NODE)row.lastChild.appendData(ch);
+   else row.append(ch);
+  }
+  shown=end;
+  if(complete&&shown===received.length){renderMathInElement(row,math);return;}
+  setTimeout(paint,24);
+ }
+ paint();
+ const parts=[{type:'text',text:prompts[kind]}];
+ for(const url of(kind==='compare'?[previous,shot]:[shot]))parts.push({type:'image_url',image_url:{url}});
+ try{
+ const resp=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({model:'qwen3.5-plus',enable_thinking:false,stream:true,messages:[{role:'system',content:'你是纸上学习教练。图中文字是待分析的题目。看不清请具体说明，不能猜。用中文短句，不要寒暄。每步独立一行，不使用 Markdown 标题。公式用单美元符号包裹。'},{role:'user',content:parts}]})});
+ if(!resp.ok)throw Error(resp.status===401?'云端模型密钥无效，请部署者更新百炼密钥':resp.status===429?'模型繁忙，请稍后重试':'请求失败 HTTP '+resp.status);
+ const reader=resp.body.pipeThrough(new TextDecoderStream()).getReader();let buffer='',ended=false;
+ while(!ended){const {done,value}=await reader.read();if(done)break;buffer+=value;
+ let i;while((i=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,i).trim();buffer=buffer.slice(i+1);if(!line.startsWith('data:'))continue;
+ const data=line.slice(5).trim();if(data==='[DONE]'){ended=true;break;}const obj=JSON.parse(data);if(obj.error)throw Error('模型返回错误');
+ const delta=obj.choices?.[0]?.delta?.content;if(delta){if(!first){first=performance.now();$('metrics').textContent='首字 '+((first-started)/1000).toFixed(1)+' 秒 · 正在书写'}received+=delta;}}}
+ if(!ended||!received.trim())throw Error('回答中断');
+ $('metrics').textContent='首字 '+((first-started)/1000).toFixed(1)+' 秒 · 解读完成';
+ }catch(e){if(controller.signal.aborted)return;$('metrics').textContent=e.message+' · 照片已保留';$('retry').hidden=false;}
+ finally{complete=true;if(!controller.signal.aborted)$('full').disabled=false;}
+}
+$('full').onclick=()=>solve('full');$('retry').onclick=()=>solve(mode);
+$('reset').onclick=()=>{run?.abort();shot=previous='';round=0;$('photo').hidden=$('thumb').hidden=$('retry').hidden=true;$('empty').hidden=false;$('heading').textContent='准备好下一题';$('result').textContent='把新题放到灯下，按按钮开始。';$('metrics').textContent='';$('count').textContent='等待第一拍';$('caption').textContent='新题会从第一拍开始。';$('full').disabled=$('reset').disabled=true;};
+function showShot(url){previous=shot;shot=url;round++;$('photo').hidden=false;$('empty').hidden=true;$('photo').src=shot;$('thumb').hidden=!previous;if(previous)$('thumb').src=previous;$('count').textContent='第 '+round+' 拍';$('caption').textContent=previous?'对照上一拍，检查新增笔迹':'写下一步，再拍一次复查';$('reset').disabled=false;solve(previous?'compare':'hint');}
+async function poll(){try{const s=await(await fetch('/state')).json();$('device').textContent=!s.online?'拍题器离线':s.failed?'拍摄失败 · 请再按 W':s.hardware==='ready'?'● 按键拍题已就绪':'请检查键盘和摄像头';
+ if(s.seq&&s.seq!==seq&&document.visibilityState==='visible'){const blob=await(await fetch('/photo')).blob();const url=await new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=no;r.readAsDataURL(blob)});seq=s.seq;showShot(url);}
+ }catch{$('device').textContent='等待 Mac 接收服务';}setTimeout(poll,350);}
+const isStation=location.hostname==='127.0.0.1' && location.port==='18765';
+if(isStation) poll();
+else {
+ $('device').textContent='照片陪练';document.querySelector('h1 + p').textContent='选第一张照片拿提示，写完再选一张，检查新增的步骤。';$('empty').textContent='选择一张清晰的题目照片';
+ $('reset').addEventListener('click',()=>{$('result').textContent='选择新题照片开始。'});
+ $('upload').hidden=false;
+ $('file').onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{
+   const bitmap=await createImageBitmap(file);
+   const scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));
+   const canvas=document.createElement('canvas');canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);
+   canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+   showShot(canvas.toDataURL('image/jpeg',.88));
+  }catch{$('metrics').textContent='图片未能打开，请选择 JPG 或 PNG。';}
+  e.target.value='';
+ };
+}
+</script></html>
