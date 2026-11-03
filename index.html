@@ -3445,9 +3445,9 @@
 
                                 <h1 class="hero-title">识 题 王</h1>
 
-                                <div class="hero-motto">卡在哪一步？</div>
+                                <div class="hero-motto">拍下题目，看懂解法</div>
 
-                                <p class="hero-desc">拍下题目拿提示，写下一步再拍，检查推导。</p>
+                                <p class="hero-desc">对准一道题，点击拍照或框选。解答后可以追问，也可以保存到错题本。</p>
 
                                 <div class="hero-line"></div>
 
@@ -3466,7 +3466,6 @@
                                     </div>
                                 </div>
 
-                                <a class="start-camera-btn" href="/desk.html" style="text-decoration:none;background:#174c3c">进入纸上陪练 →</a>
                                 <button class="start-camera-btn" id="startCameraBtn">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
@@ -4090,7 +4089,6 @@
             document.getElementById('clearChatBtn').addEventListener('click', clearChatHistory);
 
             document.addEventListener('keydown', (e) => {
-                if (e.code==='KeyW' && stream && !mazeGameRunning && !gameRunning && !e.repeat && !e.metaKey && !e.ctrlKey && !e.altKey && !e.target.closest('input,textarea,select,[contenteditable=true]')) { captureFullFrame(); return; }
                 if (e.key === 'Escape') {
                     cancelSelection();
                 }
@@ -4153,7 +4151,7 @@
             
             tempCtx.drawImage(videoElement, 0, 0);
             
-            currentQuestionImage = tempCanvas.toDataURL('image/png');
+            currentQuestionImage = tempCanvas.toDataURL('image/jpeg', 0.92);
             
             document.getElementById('questionImage').src = currentQuestionImage;
             
@@ -4275,7 +4273,7 @@
             
             tempCtx.drawImage(videoElement, x, y, width, height, 0, 0, width, height);
             
-            currentQuestionImage = tempCanvas.toDataURL('image/png');
+            currentQuestionImage = tempCanvas.toDataURL('image/jpeg', 0.92);
             
             document.getElementById('questionImage').src = currentQuestionImage;
             
@@ -4291,290 +4289,129 @@
         function showAIPanel() {
             closeAllSidebars();
             document.getElementById('aiPanel').classList.add('active');
-            document.getElementById('thinkingIndicator').classList.remove('hidden');
-            document.getElementById('answerContent').classList.add('hidden');
-            document.getElementById('chatHistory').innerHTML = '';
+
         }
 
         function hideAIPanel() {
             document.getElementById('aiPanel').classList.remove('active');
         }
 
-        async function askAI(isRetry = false) {
-            if (!currentQuestionImage) {
-                showToast('没有可分析的题目');
-                return;
+        let tutoringRequest;
+        const tutorGuide = '你是识题王的学科老师，用中文回答。先用一行复述题目，再给出必要的推理和最终答案。简单题直接讲清，不套固定模板；应用题解释数量关系并写单位；选择题说明关键依据。遇到多题先说明所解的题号。看不清的符号或缺失条件要指出位置，请学生补拍，不猜题。每一步单独一行，用自然语言和 $LaTeX$ 公式，不用 Markdown 表格或标题。追问只解释学生问到的那一步。';
+
+        function questionTurn(image) {
+            return {role: 'user', content: [
+                {type: 'text', text: '请解答照片里的题目。'},
+                {type: 'image_url', image_url: {url: image}}
+            ]};
+        }
+
+        function finishMath(element) {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(element, {delimiters: [
+                    {left:'$$',right:'$$',display:true}, {left:'$',right:'$',display:false},
+                    {left:'\\[',right:'\\]',display:true}, {left:'\\(',right:'\\)',display:false}
+                ], throwOnError:false});
             }
+        }
 
-            if (!isRetry) {
-                document.getElementById('thinkingIndicator').classList.remove('hidden');
-                document.getElementById('answerContent').classList.add('hidden');
-            }
-
-            const messages = [
-                {
-                    role: 'system',
-                    content: '你是一位专业的教育辅导老师，擅长解答各类学科问题。请用清晰、详细的方式解答问题，包括解题思路、步骤和最终答案。使用中文回答。'
-                },
-                ...conversationHistory
-            ];
-
-            if (conversationHistory.length === 0) {
-                messages.push({
-                    role: 'user',
-                    content: [
-                        {
-                            type: 'text',
-                            text: '请仔细分析这道题目，给出详细的解答过程。包括：1. 题目分析 2. 解题思路 3. 详细步骤 4. 最终答案。如果是数学题，请给出完整的计算过程。'
-                        },
-                        {
-                            type: 'image_url',
-                            image_url: {
-                                url: currentQuestionImage
-                            }
-                        }
-                    ]
-                });
-            }
-
-            let modelToUse = PRIMARY_MODEL;
+        async function streamTutor(turns, element, signal) {
             let response;
-
-            try {
+            for (const model of new Set([PRIMARY_MODEL, FALLBACK_MODEL])) {
                 response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: modelToUse,
-                        ...(modelToUse.startsWith("qwen3.5") ? {enable_thinking:false} : {}),
-                        messages: messages,
-                        stream: true
-                    })
+                    signal, method:'POST',
+                    headers:{'Content-Type':'application/json', ...(API_KEY ? {Authorization:'Bearer '+API_KEY} : {})},
+                    body:JSON.stringify({model, messages:[{role:'system',content:tutorGuide}, ...turns],
+                        stream:true, ...(model.startsWith('qwen3.5') ? {enable_thinking:false} : {})})
                 });
-
-                if (!response.ok) {
-                    console.log(`${modelToUse} 失败，尝试备用模型...`);
-                    modelToUse = FALLBACK_MODEL;
-                    
-                    response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${API_KEY}`
-                        },
-                        body: JSON.stringify({
-                            model: modelToUse,
-                            messages: messages,
-                            stream: true
-                        })
-                    });
-                }
-
-                if (!response.ok) throw new Error(response.status === 503 ? '请在 Mac 上运行「配置百炼密钥」，然后重试。' : '百炼请求失败 (HTTP ' + response.status + ')');
-                const reader = response.body.getReader();
-                let pending = '';
-                const decoder = new TextDecoder();
-                let fullContent = '';
-
-                document.getElementById('thinkingIndicator').classList.add('hidden');
-                document.getElementById('answerContent').classList.remove('hidden');
-                const answerContent = document.getElementById('answerContent');
-                answerContent.innerHTML = `<div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">使用模型: ${modelToUse}</div>`;
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = pending + decoder.decode(value,{stream:true});
-                    const lines = chunk.split('\n');
-
-                    pending = lines.pop();
+                if (![400,404].includes(response.status)) break;
+            }
+            if (!response.ok) {
+                const reasons = {401:'模型密钥无效，请检查服务端配置。', 403:'当前账号没有模型访问权限。',
+                    429:'模型请求较多，请稍后重试。', 503:'模型服务暂不可用，请检查密钥或稍后重试。'};
+                throw Error(reasons[response.status] || '模型请求失败（HTTP '+response.status+'）');
+            }
+            const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+            let buffer = '', answer = '', completed = false;
+            element.replaceChildren();
+            element.style.whiteSpace = 'pre-wrap';
+            const output = document.createTextNode('');
+            element.append(output);
+            try {
+                while (!completed) {
+                    const {done,value} = await reader.read();
+                    buffer += done ? '\n' : value;
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop();
                     for (const line of lines) {
-                        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-                            try {
-                                const data = JSON.parse(line.slice(6));
-                                const content = data.choices[0]?.delta?.content || '';
-                                if (content) {
-                                    fullContent += content;
-                                    if (typeof marked !== 'undefined') {
-                                        answerContent.innerHTML = marked.parse(fullContent);
-                                    } else {
-                                        answerContent.innerHTML = formatAnswer(fullContent);
-                                    }
-                                    answerContent.scrollTop = answerContent.scrollHeight;
-                                }
-                            } catch (e) {
-                            }
-                        }
+                        if (!line.startsWith('data:')) continue;
+                        const packet = line.slice(5).trim();
+                        if (packet === '[DONE]') { completed = true; break; }
+                        const item = JSON.parse(packet);
+                        if (item.error) throw Error('模型未能完成回答。');
+                        const delta = item.choices?.[0]?.delta?.content;
+                        if (delta) { answer += delta; output.appendData(delta); }
                     }
+                    if (done) break;
                 }
+            } finally { reader.releaseLock(); }
+            if (!completed || !answer.trim()) throw Error('回答中断，请重试。');
+            finishMath(element);
+            return answer;
+        }
 
-                if (!fullContent.trim()) throw new Error('模型没有返回解答');
-                currentAnswer = fullContent;
-                
-                if (typeof marked !== 'undefined') {
-                    answerContent.innerHTML = marked.parse(fullContent);
-                    if (typeof renderMathInElement !== 'undefined') {
-                        renderMathInElement(answerContent, {
-                            delimiters: [
-                                {left: '$$', right: '$$', display: true},
-                                {left: '$', right: '$', display: false},
-                                {left: '\\[', right: '\\]', display: true},
-                                {left: '\\(', right: '\\)', display: false}
-                            ],
-                            throwOnError: false
-                        });
-                    }
-                }
-                
-                if (conversationHistory.length === 0) {
-                    conversationHistory.push({
-                        role: 'user',
-                        content: [
-                            { type: 'text', text: '请仔细分析这道题目，给出详细的解答过程。' },
-                            { type: 'image_url', image_url: { url: currentQuestionImage } }
-                        ]
-                    });
-                }
-                conversationHistory.push({
-                    role: 'assistant',
-                    content: fullContent
-                });
-
+        async function askAI() {
+            if (!currentQuestionImage) return;
+            tutoringRequest?.abort();
+            const request = new AbortController();
+            tutoringRequest = request;
+            const turn = questionTurn(currentQuestionImage);
+            currentAnswer = null;
+            conversationHistory = [];
+            document.getElementById('chatHistory').replaceChildren();
+            const answer = document.getElementById('answerContent');
+            document.getElementById('thinkingIndicator').classList.add('hidden');
+            answer.classList.remove('hidden');
+            answer.textContent = '正在读题…';
+            try {
+                currentAnswer = await streamTutor([turn], answer, request.signal);
+                conversationHistory = [turn,{role:'assistant',content:currentAnswer}];
             } catch (error) {
-                console.error('AI请求失败:', error);
-                document.getElementById('thinkingIndicator').classList.add('hidden');
-                document.getElementById('answerContent').classList.remove('hidden');
-                document.getElementById('answerContent').innerHTML = `
-                    <p style="color: #ef4444;">抱歉，AI分析失败。请检查网络连接后重试。</p>
-                    <p style="color: var(--text-muted); font-size: 14px; margin-top: 8px;">错误信息: ${escapeHtml(error.message)}</p><button class="sidebar-btn" onclick="this.disabled=true;askAI()">用这张照片重试</button>
-                `;
+                if (!request.signal.aborted) answer.textContent = error.message+' 可点击「重新解答」，不用重新拍照。';
+            } finally {
+                if (tutoringRequest === request) tutoringRequest = null;
             }
         }
 
         async function sendFollowUpMessage() {
-            const chatInput = document.getElementById('chatInput');
-            const message = chatInput.value.trim();
-            
-            if (!message || !currentQuestionImage) return;
-
-            chatInput.value = '';
-            chatInput.style.height = 'auto';
-
-            const chatHistoryEl = document.getElementById('chatHistory');
-            chatHistoryEl.innerHTML += `
-                <div class="chat-message user">
-                    <div class="chat-message-label">追问</div>
-                    <div>${escapeHtml(message)}</div>
-                </div>
-            `;
-
-            conversationHistory.push({
-                role: 'user',
-                content: message
-            });
-
-            document.getElementById('thinkingIndicator').classList.remove('hidden');
-            document.getElementById('answerContent').classList.add('hidden');
-
+            const input = document.getElementById('chatInput');
+            const question = input.value.trim();
+            if (!question) return;
+            if (tutoringRequest || !currentAnswer) return showToast('请等本题解答完成后再追问');
+            const request = new AbortController();
+            tutoringRequest = request;
+            const turn = {role:'user',content:question};
+            const history = document.getElementById('chatHistory');
+            const entry = document.createElement('div');
+            entry.className = 'chat-message assistant';
+            const label = document.createElement('strong');
+            label.textContent = '追问 · '+question;
+            const reply = document.createElement('div');
+            reply.textContent = '正在回答…';
+            entry.append(label,reply);
+            history.append(entry);
+            input.value = '';
             try {
-                let modelToUse = PRIMARY_MODEL;
-                let response;
-
-                const messages = [
-                    {
-                        role: 'system',
-                        content: '你是一位专业的教育辅导老师，擅长解答各类学科问题。请用清晰、详细的方式解答问题。使用中文回答。'
-                    },
-                    ...conversationHistory
-                ];
-
-                response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: modelToUse,
-                        messages: messages,
-                        stream: true
-                    })
-                });
-
-                if (!response.ok) {
-                    modelToUse = FALLBACK_MODEL;
-                    response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${API_KEY}`
-                        },
-                        body: JSON.stringify({
-                            model: modelToUse,
-                            messages: messages,
-                            stream: true
-                        })
-                    });
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let fullContent = '';
-
-                document.getElementById('thinkingIndicator').classList.add('hidden');
-                document.getElementById('answerContent').classList.remove('hidden');
-                const answerContent = document.getElementById('answerContent');
-                answerContent.innerHTML = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
-
-                    for (const line of lines) {
-                        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-                            try {
-                                const data = JSON.parse(line.slice(6));
-                                const content = data.choices[0]?.delta?.content || '';
-                                if (content) {
-                                    fullContent += content;
-                                    answerContent.innerHTML = formatAnswer(fullContent);
-                                    answerContent.scrollTop = answerContent.scrollHeight;
-                                }
-                            } catch (e) {
-                            }
-                        }
-                    }
-                }
-
-                chatHistoryEl.innerHTML += `
-                    <div class="chat-message assistant">
-                        <div class="chat-message-label">AI回答</div>
-                        <div>${formatAnswer(fullContent)}</div>
-                    </div>
-                `;
-
-                conversationHistory.push({
-                    role: 'assistant',
-                    content: fullContent
-                });
-
-                answerContent.innerHTML = '';
-
+                const text = await streamTutor([...conversationHistory,turn],reply,request.signal);
+                conversationHistory.push(turn,{role:'assistant',content:text});
             } catch (error) {
-                console.error('追问失败:', error);
-                document.getElementById('thinkingIndicator').classList.add('hidden');
-                showToast('追问失败，请重试');
+                if (!request.signal.aborted) {
+                    reply.textContent = error.message;
+                    if (!input.value) input.value = question;
+                }
+            } finally {
+                if (tutoringRequest === request) tutoringRequest = null;
             }
-
-            const aiResponse = document.getElementById('aiResponse');
-            aiResponse.scrollTop = aiResponse.scrollHeight;
         }
 
         function escapeHtml(text) {
@@ -4583,39 +4420,6 @@
             return div.innerHTML;
         }
 
-        function formatAnswer(text) {
-            if (typeof marked !== 'undefined') {
-                marked.setOptions({
-                    breaks: true,
-                    gfm: true,
-                    headerIds: false,
-                    mangle: false
-                });
-                let html = marked.parse(text);
-                const answerContent = document.getElementById('answerContent');
-                answerContent.innerHTML = html;
-                if (typeof renderMathInElement !== 'undefined') {
-                    renderMathInElement(answerContent, {
-                        delimiters: [
-                            {left: '$$', right: '$$', display: true},
-                            {left: '$', right: '$', display: false},
-                            {left: '\\[', right: '\\]', display: true},
-                            {left: '\\(', right: '\\)', display: false}
-                        ],
-                        throwOnError: false
-                    });
-                }
-                return html;
-            }
-            let html = text
-                .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--accent-cyan)">$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/```([\s\S]*?)```/g, '<div class="formula">$1</div>')
-                .replace(/`(.*?)`/g, '<code style="background: var(--bg-primary); padding: 2px 6px; border-radius: 4px; color: var(--accent-orange);">$1</code>')
-                .replace(/(\d+)\.\s/g, '<br><span class="step-number">$1</span>')
-                .replace(/\n/g, '<br>');
-            return html;
-        }
 
         function openNotebook() {
             closeAllSidebars();
@@ -4926,8 +4730,15 @@
                 timestamp: Date.now()
             };
 
+            if (notebook.some(saved => saved.image === note.image && saved.answer === note.answer)) {
+                return showToast('这道题和解答已经在错题本里了');
+            }
+            try {
+                localStorage.setItem('notebook', JSON.stringify([note, ...notebook]));
+            } catch {
+                return showToast('浏览器存储空间不足或不可用，本次未保存');
+            }
             notebook.unshift(note);
-            localStorage.setItem('notebook', JSON.stringify(notebook));
             
             showToast('已保存到错题本');
             updateNotebookDisplay();
@@ -4957,7 +4768,7 @@
                     <img class="card-image" src="${note.image}" alt="题目">
                     <div class="card-body">
                         <div class="card-date">${note.date}</div>
-                        <div class="card-preview">${(note.answer || '暂无答案').substring(0, 100)}...</div>
+                        <div class="card-preview">${escapeHtml((note.answer || '暂无答案').substring(0, 100))}...</div>
                         <div class="card-actions">
                             <button class="card-btn view" onclick="viewNote(${note.id})">查看详情</button>
                             <button class="card-btn delete" onclick="deleteNote(${note.id})">删除</button>
@@ -4970,13 +4781,20 @@
         function viewNote(id) {
             const note = notebook.find(n => n.id === id);
             if (note) {
+                tutoringRequest?.abort();
+                tutoringRequest = null;
+                document.getElementById('chatHistory').replaceChildren();
+                conversationHistory = [questionTurn(note.image), {role:'assistant',content:note.answer}];
                 currentQuestionImage = note.image;
                 currentAnswer = note.answer;
                 document.getElementById('questionImage').src = note.image;
                 showAIPanel();
                 document.getElementById('thinkingIndicator').classList.add('hidden');
                 document.getElementById('answerContent').classList.remove('hidden');
-                document.getElementById('answerContent').innerHTML = formatAnswer(note.answer);
+                const answer = document.getElementById('answerContent');
+                answer.style.whiteSpace = 'pre-wrap';
+                answer.textContent = note.answer;
+                finishMath(answer);
                 hideNotebook();
             }
         }
@@ -6962,24 +6780,5 @@ ${problem}
             }
         })();
     </script>
-<aside id="station" style="position:fixed;left:12px;bottom:12px;z-index:99999;background:#123c39;color:white;padding:10px 16px;border-radius:12px;font:15px system-ui">正在连接拍题器</aside>
-<script>
-let lastShot=Number(sessionStorage.getItem('piShot') || 0);
-async function pollStation(){
- const badge=document.querySelector('#station');
- try{
-  const state=await (await fetch('/state')).json();
-  badge.textContent=!state.online?'拍题器离线':state.hardware!=='ready'?'请检查 USB 键盘和摄像头':state.failed?'拍摄失败，请再按 W':'拍题器就绪 · 按 W 拍题';
-  if(document.visibilityState==='visible' && state.seq && state.seq!==lastShot){
-   const picture=await (await fetch('/photo')).blob();
-   currentQuestionImage=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(picture)});
-   document.querySelector('#questionImage').src=currentQuestionImage;
-   lastShot=state.seq;sessionStorage.setItem('piShot',lastShot);
-   conversationHistory=[];showAIPanel();badge.textContent='已拍摄 · 正在解题';await askAI();
-  }
- }catch{badge.textContent='Mac 接收服务连接中'}
- setTimeout(pollStation,500);
-}
-if(location.hostname==='127.0.0.1' && location.port==='18765')pollStation();else document.querySelector('#station').hidden=true;
-</script></body>
+</body>
 </html>
